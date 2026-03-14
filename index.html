@@ -1,82 +1,10 @@
-// Wildcats Training — Service Worker
-// IMPORTANT: Change CACHE_VERSION every time you deploy an update.
-// This forces all home screen installs to reload with the latest version.
-const CACHE_VERSION = 'wildcats-v1';
-const CACHE_NAME = `wildcats-cache-${CACHE_VERSION}`;
-
-// Files to cache for offline use
-const PRECACHE_URLS = [
-  '/wildcats-training/',
-  '/wildcats-training/index.html',
-];
-
-// Install — cache core files
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(PRECACHE_URLS);
-    }).then(() => {
-      // Force this service worker to become active immediately
-      return self.skipWaiting();
-    })
-  );
-});
-
-// Activate — delete old caches
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      );
-    }).then(() => {
-      // Take control of all open tabs immediately
-      return self.clients.claim();
-    })
-  );
-});
-
-// Fetch — network first, fall back to cache
-// This means users ALWAYS get the latest version when online
-self.addEventListener('fetch', event => {
-  // Only handle GET requests for our own domain
-  if (event.request.method !== 'GET') return;
-
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Got a fresh response — update the cache
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      })
-      .catch(() => {
-        // Offline fallback — serve from cache
-        return caches.match(event.request).then(cached => {
-          return cached || caches.match('/wildcats-training/index.html');
-        });
-      })
-  );
-});
-
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
-    }
-  ]
-}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
