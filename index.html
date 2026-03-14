@@ -1,3 +1,66 @@
+// Wildcats Training — Service Worker
+// IMPORTANT: Change CACHE_VERSION every time you deploy an update.
+// This forces all home screen installs to reload with the latest version.
+const CACHE_VERSION = 'wildcats-v1';
+const CACHE_NAME = `wildcats-cache-${CACHE_VERSION}`;
+
+// Files to cache for offline use
+const PRECACHE_URLS = [
+  '/wildcats-training/',
+  '/wildcats-training/index.html',
+];
+
+// Install — cache core files
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(PRECACHE_URLS);
+    }).then(() => {
+      // Force this service worker to become active immediately
+      return self.skipWaiting();
+    })
+  );
+});
+
+// Activate — delete old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      );
+    }).then(() => {
+      // Take control of all open tabs immediately
+      return self.clients.claim();
+    })
+  );
+});
+
+// Fetch — network first, fall back to cache
+// This means users ALWAYS get the latest version when online
+self.addEventListener('fetch', event => {
+  // Only handle GET requests for our own domain
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Got a fresh response — update the cache
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => {
+        // Offline fallback — serve from cache
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('/wildcats-training/index.html');
+        });
+      })
+  );
+});
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +87,29 @@
     ::-webkit-scrollbar-thumb { background: #3A3A3A; border-radius: 2px; }
     :root { --border-radius-sm: 6px; --border-radius-md: 8px; --border-radius-lg: 14px; }
   </style>
+
+  <script>
+    // Service worker — forces fresh content on every visit from home screen
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/wildcats-training/sw.js').then(reg => {
+        // Check for updates every time the app opens
+        reg.update();
+        // When a new version is waiting, reload immediately
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'activated') {
+              window.location.reload();
+            }
+          });
+        });
+      });
+      // If a new service worker takes over, reload the page
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
+    }
+  </script>
 </head>
 <body>
   <div id="root"></div>
