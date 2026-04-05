@@ -16,10 +16,36 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260405-134801 -->
+  <!-- Wildcats Training v20260405-135207 -->
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    // Catch errors BEFORE the app loads
+    window.__errors = [];
+    window.onerror = function(msg, src, line, col, err) {
+      window.__errors.push({msg, line, stack: err && err.stack});
+      showErr('ERROR: ' + msg + ' (line ' + line + ')\n' + (err && err.stack ? err.stack : '') + '\n\n');
+    };
+    window.addEventListener('unhandledrejection', function(e) {
+      showErr('PROMISE: ' + (e.reason ? (e.reason.message || String(e.reason)) : 'unknown') + '\n' + (e.reason && e.reason.stack ? e.reason.stack : '') + '\n\n');
+    });
+    function showErr(txt) {
+      var d = document.getElementById('err');
+      if (!d) {
+        d = document.createElement('div');
+        d.id = 'err';
+        d.style.cssText = 'position:fixed;inset:0;background:#0a0a0a;color:#ff6b6b;padding:16px;overflow:auto;z-index:99999;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all';
+        d.innerHTML = '<b style="font-size:15px;color:#ff4444">App Error — screenshot this</b>\n\n';
+        document.body.appendChild(d);
+      }
+      d.innerHTML += txt;
+    }
+    setTimeout(function() {
+      var r = document.getElementById('root');
+      if (r && !r.children.length) showErr('React did not mount (root is empty after 5s)\n');
+    }, 5000);
+  </script>
   <script>
 (() => {
   var __create = Object.create;
@@ -20040,12 +20066,8 @@ react/cjs/react-jsx-runtime.production.js:
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs) {
-        regs.forEach(function(r) { r.unregister(); });
-      });
-      caches.keys().then(function(keys) {
-        keys.forEach(function(k) { caches.delete(k); });
-      });
+      navigator.serviceWorker.getRegistrations().then(function(r) { r.forEach(function(x) { x.unregister(); }); });
+      caches.keys().then(function(k) { k.forEach(function(x) { caches.delete(x); }); });
     }
   </script>
 </body>
