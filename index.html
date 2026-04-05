@@ -7,6 +7,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Wildcats" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Wildcat Basketball Training</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,7 +19,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260405-115831 -->
+  <!-- Wildcats Training v20260405-120641 -->
 </head>
 <body>
   <div id="root"></div>
@@ -110,11 +113,13 @@ react/cjs/react-jsx-runtime.production.js:
 
   </script>
   <script>
+    // Unregister any old service workers and clear caches
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/wildcats-training/sw.js', { scope: '/wildcats-training/' })
-          .then(function(reg) { reg.update(); })
-          .catch(function(e) { console.log('SW failed:', e); });
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        registrations.forEach(function(reg) { reg.unregister(); });
+      });
+      caches.keys().then(function(keys) {
+        keys.forEach(function(k) { caches.delete(k); });
       });
     }
   </script>
