@@ -16,35 +16,17 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260405-135207 -->
+  <!-- Wildcats Training v20260405-135640 -->
 </head>
 <body>
   <div id="root"></div>
   <script>
-    // Catch errors BEFORE the app loads
-    window.__errors = [];
     window.onerror = function(msg, src, line, col, err) {
-      window.__errors.push({msg, line, stack: err && err.stack});
-      showErr('ERROR: ' + msg + ' (line ' + line + ')\n' + (err && err.stack ? err.stack : '') + '\n\n');
+      var d = document.createElement('div');
+      d.style.cssText = 'position:fixed;inset:0;background:#0a0a0a;color:#ff6b6b;padding:16px;overflow:auto;z-index:99999;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all';
+      d.textContent = 'ERROR: ' + msg + ' (line ' + line + ')\n\n' + (err && err.stack ? err.stack : '');
+      document.body.appendChild(d);
     };
-    window.addEventListener('unhandledrejection', function(e) {
-      showErr('PROMISE: ' + (e.reason ? (e.reason.message || String(e.reason)) : 'unknown') + '\n' + (e.reason && e.reason.stack ? e.reason.stack : '') + '\n\n');
-    });
-    function showErr(txt) {
-      var d = document.getElementById('err');
-      if (!d) {
-        d = document.createElement('div');
-        d.id = 'err';
-        d.style.cssText = 'position:fixed;inset:0;background:#0a0a0a;color:#ff6b6b;padding:16px;overflow:auto;z-index:99999;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all';
-        d.innerHTML = '<b style="font-size:15px;color:#ff4444">App Error — screenshot this</b>\n\n';
-        document.body.appendChild(d);
-      }
-      d.innerHTML += txt;
-    }
-    setTimeout(function() {
-      var r = document.getElementById('root');
-      if (r && !r.children.length) showErr('React did not mount (root is empty after 5s)\n');
-    }, 5000);
   </script>
   <script>
 (() => {
@@ -16188,6 +16170,13 @@
     const [reactions, setReactions] = (0, import_react.useState)({});
     const [isOffline, setIsOffline] = (0, import_react.useState)(!navigator.onLine);
     const [programConfig, setProgramConfig] = (0, import_react.useState)({});
+    const COACH_EMAIL = "leflerj25@gmail.com";
+    const MAIN_COACH_EMAIL = "leflerj25@gmail.com";
+    const allCoachEmails = [COACH_EMAIL, ...(programConfig == null ? void 0 : programConfig.additionalCoaches) || []].map((e) => e.toLowerCase());
+    const isCoachAccount = allCoachEmails.includes(((_a = user == null ? void 0 : user.email) == null ? void 0 : _a.toLowerCase()) || "");
+    const isMainCoach = ((_b = user == null ? void 0 : user.email) == null ? void 0 : _b.toLowerCase()) === MAIN_COACH_EMAIL.toLowerCase();
+    const managerEmails = ((programConfig == null ? void 0 : programConfig.managerEmails) || []).map((e) => e.toLowerCase());
+    const isManagerAccount = !isCoachAccount && managerEmails.includes(((_c = user == null ? void 0 : user.email) == null ? void 0 : _c.toLowerCase()) || "");
     const [showWeeklySummary, setShowWeeklySummary] = (0, import_react.useState)(false);
     const [pullRefreshing, setPullRefreshing] = (0, import_react.useState)(false);
     const [pullDistance, setPullDistance] = (0, import_react.useState)(0);
@@ -18703,13 +18692,6 @@
         ] }, e.key)) }) })
       ] });
     };
-    const COACH_EMAIL = "leflerj25@gmail.com";
-    const MAIN_COACH_EMAIL = "leflerj25@gmail.com";
-    const allCoachEmails = [COACH_EMAIL, ...(programConfig == null ? void 0 : programConfig.additionalCoaches) || []].map((e) => e.toLowerCase());
-    const isCoachAccount = allCoachEmails.includes(((_a = user == null ? void 0 : user.email) == null ? void 0 : _a.toLowerCase()) || "");
-    const isMainCoach = ((_b = user == null ? void 0 : user.email) == null ? void 0 : _b.toLowerCase()) === MAIN_COACH_EMAIL.toLowerCase();
-    const managerEmails = ((programConfig == null ? void 0 : programConfig.managerEmails) || []).map((e) => e.toLowerCase());
-    const isManagerAccount = !isCoachAccount && managerEmails.includes(((_c = user == null ? void 0 : user.email) == null ? void 0 : _c.toLowerCase()) || "");
     const renderCoachDashboard = () => {
       if (!showCoach) return null;
       const totalW = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => {
