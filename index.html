@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260407-172842 -->
+  <!-- Wildcats Training v20260407-230826 -->
 </head>
 <body>
   <div id="root"></div>
@@ -12840,6 +12840,7 @@
     text: "#F0F0F0",
     textMuted: "#888888"
   };
+  var BODYWEIGHT_ONLY = /* @__PURE__ */ new Set(["Repeat Vertical Jump \u2014 land and jump", "Sit Cross-Legged Against Wall \u2014 Wall Slides, sit TALL", "Side Plank w Top Leg Raise \u2014 slow and controlled", "Side Plank Against Wall w Top Leg Raise", "3 Continuous Horizontal Jumps in a Row", "Push-Ups", "Jump Squat", "Side Plank from Hand w Straight Arm External Rotation", "Continuous Vertical Jump", "Single Leg Tuck Jump", "Horizontal Jump and Stick", "Prone Trap Punch \u2014 thumbs up, elbows up", "Push-Up Position Opposite Shoulder Tap", "Vertical Jump", "Hands on MB Push-Up", "SB Prone Plank w Arm Circles", "SB Push-Up Position Roll Out", "Hanging Straight Leg Raise"]);
   var YT_LINKS = {
     "mb oh throwdown": "https://www.youtube.com/watch?v=h2sd00aYOUY",
     "push-up position opposite": "https://www.youtube.com/watch?v=lMrnpKDZGCg",
@@ -12932,7 +12933,7 @@
     "side lying rotation": "https://www.youtube.com/watch?v=EHZJns1bXPM",
     "elbow to instep lunge": "https://www.youtube.com/watch?v=sSTjxBzYCrw",
     "reverse walking lunge": "https://www.youtube.com/watch?v=GAwT4IsB14Y",
-    "quadrupled rotation": "https://www.youtube.com/watch?v=TZeW6TYRxnQ",
+    "quadrupled rotation": "https://www.youtube.com/watch?v=z2zv526I7M8",
     "quarter squat to knee hug": "https://www.youtube.com/watch?v=HCFUgYtIXlE",
     "push-up": "https://www.youtube.com/watch?v=iBmvPEWt5og",
     "straight leg march": "https://www.youtube.com/watch?v=3woJBsUbM9o",
@@ -15709,6 +15710,7 @@
   }
   function isDayUnlocked(prog, phase, dayIndex, completedWorkouts, coachBypass = false) {
     if (coachBypass) return true;
+    if (prog.id === "dribble" || prog.id === "shooting" || prog.id === "dribble_c2" || prog.id === "shooting_c2") return true;
     if (dayIndex === 0) return true;
     const prevDay = phase.days[dayIndex - 1];
     return !!completedWorkouts[`${prog.id}__${phase.id}__${prevDay.id}`];
@@ -16145,6 +16147,7 @@
     const [activePhase, setActivePhase] = (0, import_react.useState)(null);
     const [activeDay, setActiveDay] = (0, import_react.useState)(null);
     const [activeFieldWork, setActiveFieldWork] = (0, import_react.useState)(null);
+    const [showHomeCourt, setShowHomeCourt] = (0, import_react.useState)(false);
     const [completedWorkouts, setCompletedWorkouts] = (0, import_react.useState)({});
     const [leaderboard, setLeaderboard] = (0, import_react.useState)([]);
     const [lbTab, setLbTab] = (0, import_react.useState)("overall");
@@ -16499,6 +16502,7 @@
       setActivePhase(null);
       setActiveDay(null);
       setActiveFieldWork(null);
+      setShowHomeCourt(false);
       setTab("home");
     };
     const completeWorkout = async (progId, phaseId, dayId) => {
@@ -17109,47 +17113,49 @@
                     ] })
                   ] })
                 ] }),
-                isScProgram && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-                  padding: "8px 14px 10px",
-                  background: COLORS.surfaceAlt,
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "flex-end",
-                  gap: 8
-                }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.textMuted, marginBottom: 2 }, children: "Weight (lbs):" }),
-                  Array.from({ length: ex.sets }).map((_, si) => {
-                    const wk2 = `${exKey}__${si}`;
-                    const val = setWeights[wk2] || "";
-                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 10, color: COLORS.textMuted, fontWeight: 500 }, children: [
-                        "Set ",
-                        si + 1
-                      ] }),
+                isScProgram && (() => {
+                  const isBW = BODYWEIGHT_ONLY.has(ex.name);
+                  const bwKey = `${exKey}__bwdone`;
+                  const bwDone = !!setWeights[bwKey];
+                  if (isBW) {
+                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 14px 10px", background: COLORS.surfaceAlt, display: "flex", alignItems: "center", gap: 10 }, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                        "input",
+                        "button",
                         {
-                          type: "number",
-                          min: "0",
-                          step: "2.5",
-                          placeholder: "\u2014",
-                          value: val,
-                          onChange: (e) => updateWeight(wk2, e.target.value),
-                          style: {
-                            width: 54,
-                            textAlign: "center",
-                            fontSize: 13,
-                            padding: "5px 4px",
-                            boxSizing: "border-box",
-                            fontWeight: val ? 500 : 400,
-                            borderColor: val ? activePhase.color : void 0,
-                            color: val ? activePhase.color : void 0
-                          }
+                          onClick: () => updateWeight(bwKey, bwDone ? "" : "done"),
+                          style: { width: 28, height: 28, borderRadius: 6, border: `2px solid ${bwDone ? activePhase.color : COLORS.border}`, background: bwDone ? activePhase.color : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
+                          children: bwDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: "#fff", fontSize: 14, fontWeight: 700 }, children: "\u2713" })
                         }
-                      )
-                    ] }, si);
-                  })
-                ] })
+                      ),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12, color: bwDone ? activePhase.color : COLORS.textMuted, fontWeight: bwDone ? 600 : 400 }, children: bwDone ? "Completed" : "Mark complete" })
+                    ] });
+                  }
+                  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 14px 10px", background: COLORS.surfaceAlt, display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 8 }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.textMuted, marginBottom: 2 }, children: "Weight (lbs):" }),
+                    [1, 2, 3, 4, 5, 6].slice(0, ex.sets).map((_, si) => {
+                      const wk2 = `${exKey}__${si}`;
+                      const val = setWeights[wk2] || "";
+                      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }, children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 10, color: COLORS.textMuted, fontWeight: 500 }, children: [
+                          "Set ",
+                          si + 1
+                        ] }),
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                          "input",
+                          {
+                            type: "number",
+                            min: "0",
+                            step: "2.5",
+                            placeholder: "\u2014",
+                            value: val,
+                            onChange: (e) => updateWeight(wk2, e.target.value),
+                            style: { width: 54, textAlign: "center", fontSize: 13, padding: "5px 4px", boxSizing: "border-box", fontWeight: val ? 500 : 400, borderColor: val ? activePhase.color : void 0, color: val ? activePhase.color : void 0 }
+                          }
+                        )
+                      ] }, si);
+                    })
+                  ] });
+                })()
               ] }, ei);
             }) }),
             group.restAfter && (() => {
@@ -17335,6 +17341,67 @@
         }, style: { width: "100%", padding: "14px 0", background: phaseColor, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 16, cursor: "pointer" }, children: "Mark Complete +50 XP" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "100%", padding: "14px 0", background: "#1A3A2A", color: "#4CAF82", borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center" }, children: "\u2713 Completed" }) })
       ] });
     };
+    const renderHomeCourtView = () => {
+      const progColor = (activePhase == null ? void 0 : activePhase.color) || COLORS.primary;
+      const hcKey = `${activeProg.id}__${activePhase == null ? void 0 : activePhase.id}__homecourt`;
+      const existing = runLogs[hcKey];
+      const handleScreenshot = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+          const screenshot = ev.target.result;
+          const updated = { ...runLogs[hcKey] || {}, screenshot, completedAt: (/* @__PURE__ */ new Date()).toISOString() };
+          const allLogs = { ...runLogs, [hcKey]: updated };
+          setRunLogs(allLogs);
+          await saveData(`wildcats:runs:${user.email}`, allLogs);
+          await completeWorkout(activeProg.id, activePhase.id, "homecourt");
+        };
+        reader.readAsDataURL(file);
+      };
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setShowHomeCourt(false), style: { marginBottom: 14, fontSize: 13, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 }, children: "\u2190 Back" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 52, height: 52, borderRadius: 14, background: "#FF6B3518", border: "1.5px solid #FF6B3540", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }, children: "\u{1F4F1}" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, fontWeight: 700, color: "#FF6B35", textTransform: "uppercase", letterSpacing: 0.8 }, children: "HomeCourt Workout" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { margin: "2px 0 0", fontSize: 20, fontWeight: 700, color: "#fff" }, children: "Track with HomeCourt AI" })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: COLORS.surface, borderRadius: 14, padding: "16px", marginBottom: 16, border: `1px solid ${COLORS.border}` }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: "#fff" }, children: "How it works:" }),
+          [
+            ["1\uFE0F\u20E3", "Open HomeCourt and complete your session"],
+            ["2\uFE0F\u20E3", "Screenshot your results when done"],
+            ["3\uFE0F\u20E3", "Upload the screenshot below for proof"]
+          ].map(([icon, text]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 16 }, children: icon }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: COLORS.textMuted }, children: text })
+          ] }, icon))
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: "homecourtai://", style: { display: "block", textDecoration: "none", marginBottom: 12 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "100%", padding: "14px 0", background: "#FF6B35", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 16, cursor: "pointer", textAlign: "center", boxSizing: "border-box" }, children: "\u{1F4F1} Open HomeCourt App" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 20px", fontSize: 11, color: COLORS.textMuted, textAlign: "center" }, children: "If HomeCourt doesn't open, make sure it's installed on your device" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 8px", fontSize: 13, fontWeight: 600, color: "#fff" }, children: "Upload your HomeCourt screenshot:" }),
+        (existing == null ? void 0 : existing.screenshot) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 16 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: existing.screenshot, alt: "HomeCourt proof", style: { width: "100%", borderRadius: 12, border: `1.5px solid ${progColor}40`, maxHeight: 300, objectFit: "contain", background: "#111" } }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "8px 0 0", fontSize: 12, color: "#4CAF82", fontWeight: 600 }, children: "\u2713 Screenshot uploaded \u2014 session logged!" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = handleScreenshot;
+            input.click();
+          }, style: { marginTop: 8, fontSize: 12, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0, textDecoration: "underline" }, children: "Replace screenshot" })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.onchange = handleScreenshot;
+          input.click();
+        }, style: { width: "100%", padding: "16px 0", background: COLORS.surface, border: `1.5px dashed ${COLORS.border}`, borderRadius: 12, cursor: "pointer", fontSize: 14, color: COLORS.textMuted, marginBottom: 16 }, children: "\u{1F4F8} Tap to upload screenshot" }),
+        (existing == null ? void 0 : existing.screenshot) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "100%", padding: "14px 0", background: "#1A3A2A", color: "#4CAF82", borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center" }, children: "\u2713 HomeCourt Session Complete +50 XP" })
+      ] });
+    };
     const renderPhaseView = () => {
       var _a2;
       const isRunning = activeProg.id === "running";
@@ -17503,7 +17570,26 @@
               );
             })
           ] }, weekNum);
-        })
+        }),
+        (activeProg.id === "dribble" || activeProg.id === "shooting" || activeProg.id === "dribble_c2" || activeProg.id === "shooting_c2") && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: 24, paddingTop: 20, borderTop: `1px solid ${COLORS.border}` }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 12, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }, children: "\u{1F4F1} HomeCourt Integration" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "button",
+            {
+              onClick: () => setShowHomeCourt(true),
+              style: { width: "100%", background: COLORS.surface, border: `1.5px solid #FF6B3540`, borderRadius: 14, padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 14 },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 48, height: 48, borderRadius: 12, background: "#FF6B3518", border: "1.5px solid #FF6B3540", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }, children: "\u{1F4F1}" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, fontWeight: 700, color: "#FF6B35", textTransform: "uppercase", letterSpacing: 0.8 }, children: "HomeCourt Workout" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 1px", fontWeight: 700, fontSize: 15, color: "#fff" }, children: "Track with HomeCourt AI" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: "Open app \xB7 complete session \xB7 upload screenshot" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: COLORS.textMuted, fontSize: 18 }, children: "\u203A" })
+              ]
+            }
+          )
+        ] })
       ] });
     };
     const renderProgramView = () => {
@@ -20016,7 +20102,7 @@
               }, children: "\u2193" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 13, color: COLORS.primary, fontWeight: 600 }, children: pullDistance >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh" })
             ] }) }) }),
-            activeFieldWork && activePhase && activeProg ? renderFieldWorkView() : activeDay && activePhase && activeProg ? renderWorkoutView() : activePhase && activeProg ? renderPhaseView() : activeProg ? renderProgramView() : tab === "home" ? renderHome() : tab === "programs" ? renderPrograms() : tab === "leaderboard" ? renderLeaderboard() : renderProfile()
+            activeFieldWork && activePhase && activeProg ? renderFieldWorkView() : showHomeCourt && activePhase && activeProg ? renderHomeCourtView() : activeDay && activePhase && activeProg ? renderWorkoutView() : activePhase && activeProg ? renderPhaseView() : activeProg ? renderProgramView() : tab === "home" ? renderHome() : tab === "programs" ? renderPrograms() : tab === "leaderboard" ? renderLeaderboard() : renderProfile()
           ]
         }
       ),
@@ -20039,6 +20125,7 @@
             setActivePhase(null);
             setActiveDay(null);
             setActiveFieldWork(null);
+            setShowHomeCourt(false);
           },
           style: {
             flex: 1,
