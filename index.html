@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260407-230826 -->
+  <!-- Wildcats Training v20260408-132735 -->
 </head>
 <body>
   <div id="root"></div>
@@ -13941,7 +13941,7 @@
             { name: "Movement Prep: Quick Feet Kareoke", sets: 2, reps: "15m", note: "Jog Back" },
             { name: "Neural Activation: 2 Foot Lateral Line Hops", sets: 2, reps: "5 sec", note: "30 sec rest" },
             { name: "Neural Activation: 2 Foot Lateral Line Hop to Sprint", sets: 2, reps: "5sec + 10m", note: "45 sec rest" },
-            { name: "Shuffle Technique: 2-step lateral shuffle to Base", sets: 2, reps: "3 L/R", note: "1.5 min rest. Base Position = 2 quick crossover steps + return to base. Be quick w steps." },
+            { name: "Shuffle Technique: 2-step lateral shuffle to Base", sets: 2, reps: "3 L/R", note: "1.5 min rest. Base Position = 2 quick shuffle steps + return to base. Be quick w steps." },
             { name: "Change of Direction: 10m Cone Shuffle", sets: 3, reps: "4", note: "1 min rest. Set up 2 cones 10m apart. Shuffle back and forth as fast as possible." },
             { name: "Speed Coordination: 10m Lateral A March to Sprint", sets: 2, reps: "2 L/R", note: "1 min rest \u2014 100% INTENSITY. Perform over 20m (10m+10m)." },
             { name: "Speed Coordination: 10m Shuffle into 10m Sprint", sets: 2, reps: "2 L/R", note: "1 min rest \u2014 100% INTENSITY" },
@@ -16560,7 +16560,8 @@
       const updated = { ...setWeights, [key]: val };
       setSetWeights(updated);
       await saveData(`wildcats:weights:${user.email}`, updated);
-      if (val && (!prev || parseFloat(val) > parseFloat(prev))) {
+      const isBWKey = key.includes("__bw");
+      if (!isBWKey && val && (!prev || parseFloat(val) > parseFloat(prev))) {
         const parts = key.split("__");
         const exName = (() => {
           var _a2, _b2, _c2, _d;
@@ -17115,19 +17116,24 @@
                 ] }),
                 isScProgram && (() => {
                   const isBW = BODYWEIGHT_ONLY.has(ex.name);
-                  const bwKey = `${exKey}__bwdone`;
-                  const bwDone = !!setWeights[bwKey];
                   if (isBW) {
-                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 14px 10px", background: COLORS.surfaceAlt, display: "flex", alignItems: "center", gap: 10 }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                        "button",
-                        {
-                          onClick: () => updateWeight(bwKey, bwDone ? "" : "done"),
-                          style: { width: 28, height: 28, borderRadius: 6, border: `2px solid ${bwDone ? activePhase.color : COLORS.border}`, background: bwDone ? activePhase.color : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-                          children: bwDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: "#fff", fontSize: 14, fontWeight: 700 }, children: "\u2713" })
-                        }
-                      ),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 12, color: bwDone ? activePhase.color : COLORS.textMuted, fontWeight: bwDone ? 600 : 400 }, children: bwDone ? "Completed" : "Mark complete" })
+                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 14px 10px", background: COLORS.surfaceAlt }, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.textMuted, display: "block", marginBottom: 6 }, children: "Sets completed:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: 8 }, children: [1, 2, 3, 4, 5, 6].slice(0, ex.sets).map((_, si) => {
+                        const bwKey = `${exKey}__bw${si}`;
+                        const checked = !!setWeights[bwKey];
+                        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }, children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 10, color: COLORS.textMuted, fontWeight: 500 }, children: [
+                            "Set ",
+                            si + 1
+                          ] }),
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+                            const updated = { ...setWeights, [bwKey]: checked ? "" : "done" };
+                            setSetWeights(updated);
+                            saveData(`wildcats:weights:${user.email}`, updated);
+                          }, style: { width: 36, height: 36, borderRadius: 8, border: `2px solid ${checked ? activePhase.color : COLORS.border}`, background: checked ? activePhase.color : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }, children: checked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: "#fff", fontSize: 16, fontWeight: 700 }, children: "\u2713" }) })
+                        ] }, si);
+                      }) })
                     ] });
                   }
                   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "8px 14px 10px", background: COLORS.surfaceAlt, display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 8 }, children: [
@@ -17409,7 +17415,7 @@
       const hasFieldWork = !isRunning && ((_a2 = activePhase.fieldWork) == null ? void 0 : _a2.length) > 0;
       const numWeeks = 4;
       const daysPerWeek = activePhase.days.length / numWeeks;
-      const fwPerWeek = hasFieldWork ? activePhase.fieldWork.filter((fw) => fw.type !== "none").length : 0;
+      const fwPerWeek = hasFieldWork ? activePhase.fieldWork.filter((fw) => fw.type !== "none" && !(fw.type === "linear" && activePhase.id === "may")).length : 0;
       const totalItems = activePhase.days.length + fwPerWeek * numWeeks;
       let doneItems = activePhase.days.filter((d) => !!completedWorkouts[`${activeProg.id}__${activePhase.id}__${d.id}`]).length;
       if (hasFieldWork) {
@@ -17449,6 +17455,22 @@
             ] })
           ] })
         ] }),
+        (activeProg.id === "dribble" || activeProg.id === "shooting" || activeProg.id === "dribble_c2" || activeProg.id === "shooting_c2") && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "button",
+          {
+            onClick: () => setShowHomeCourt(true),
+            style: { width: "100%", background: COLORS.surface, border: `1.5px solid #FF6B3540`, borderRadius: 14, padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 14, marginBottom: 10 },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 44, height: 44, borderRadius: 11, background: "#FF6B3518", border: "1.5px solid #FF6B3540", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }, children: "\u{1F4F1}" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, fontWeight: 700, color: "#FF6B35", textTransform: "uppercase", letterSpacing: 0.8 }, children: "HomeCourt Workout" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 1px", fontWeight: 600, fontSize: 14, color: "#fff" }, children: "Track with HomeCourt AI" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: "Open app \xB7 complete session \xB7 upload screenshot" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: COLORS.textMuted, fontSize: 18 }, children: "\u203A" })
+            ]
+          }
+        ),
         isRunning && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 12, fontWeight: 600, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }, children: "Runs" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }, children: activePhase.days.map((day, dayIndex) => {
@@ -17501,8 +17523,8 @@
           return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: hasFieldWork ? 24 : 0 }, children: [
             hasFieldWork && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { margin: 0, fontSize: 12, fontWeight: 700, color: weekNum === 4 ? "#FF6B35" : COLORS.primary, textTransform: "uppercase", letterSpacing: 1 }, children: weekLabel }),
-              isWeekGymDone(weekNum) && fwPerWeek > 0 && !activePhase.fieldWork.filter((fw) => fw.type !== "none").every((fw) => isFieldWorkDone(weekNum, fw.type)) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#FF6B35", fontWeight: 600 }, children: "\u26A1 Field work ready!" }),
-              isWeekGymDone(weekNum) && fwPerWeek > 0 && activePhase.fieldWork.filter((fw) => fw.type !== "none").every((fw) => isFieldWorkDone(weekNum, fw.type)) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#4CAF82", fontWeight: 600 }, children: "\u2713 Week complete" })
+              isWeekGymDone(weekNum) && fwPerWeek > 0 && !activePhase.fieldWork.filter((fw) => fw.type !== "none" && !(fw.type === "linear" && activePhase.id === "may")).every((fw) => isFieldWorkDone(weekNum, fw.type)) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#FF6B35", fontWeight: 600 }, children: "\u26A1 Field work ready!" }),
+              isWeekGymDone(weekNum) && fwPerWeek > 0 && activePhase.fieldWork.filter((fw) => fw.type !== "none" && !(fw.type === "linear" && activePhase.id === "may")).every((fw) => isFieldWorkDone(weekNum, fw.type)) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#4CAF82", fontWeight: 600 }, children: "\u2713 Week complete" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginBottom: hasFieldWork ? 8 : 24 }, children: weekDays.map((day, di) => {
               var _a3;
@@ -17534,7 +17556,10 @@
                 day.id
               );
             }) }),
-            hasFieldWork && activePhase.fieldWork.filter((fw) => fw.type !== "none").map((fw, fi) => {
+            hasFieldWork && activePhase.fieldWork.filter((fw) => {
+              if (fw.type === "linear" && activePhase.id === "may") return false;
+              return fw.type !== "none";
+            }).map((fw, fi) => {
               const fwUnlocked = isFieldWorkUnlocked(weekNum, fw.type);
               const fwDone = isFieldWorkDone(weekNum, fw.type);
               const fwKey = `${activeProg.id}__${activePhase.id}__field_${fw.type}_w${weekNum}`;
@@ -17570,26 +17595,7 @@
               );
             })
           ] }, weekNum);
-        }),
-        (activeProg.id === "dribble" || activeProg.id === "shooting" || activeProg.id === "dribble_c2" || activeProg.id === "shooting_c2") && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: 24, paddingTop: 20, borderTop: `1px solid ${COLORS.border}` }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 12, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }, children: "\u{1F4F1} HomeCourt Integration" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "button",
-            {
-              onClick: () => setShowHomeCourt(true),
-              style: { width: "100%", background: COLORS.surface, border: `1.5px solid #FF6B3540`, borderRadius: 14, padding: "14px 16px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 14 },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 48, height: 48, borderRadius: 12, background: "#FF6B3518", border: "1.5px solid #FF6B3540", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }, children: "\u{1F4F1}" }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, fontWeight: 700, color: "#FF6B35", textTransform: "uppercase", letterSpacing: 0.8 }, children: "HomeCourt Workout" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 1px", fontWeight: 700, fontSize: 15, color: "#fff" }, children: "Track with HomeCourt AI" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: "Open app \xB7 complete session \xB7 upload screenshot" })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: COLORS.textMuted, fontSize: 18 }, children: "\u203A" })
-              ]
-            }
-          )
-        ] })
+        })
       ] });
     };
     const renderProgramView = () => {
