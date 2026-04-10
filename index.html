@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260408-132735 -->
+  <!-- Wildcats Training v20260410-231940 -->
 </head>
 <body>
   <div id="root"></div>
@@ -12871,7 +12871,7 @@
     "wall slides": "https://www.youtube.com/watch?v=WhDNjJRj5c4",
     "single leg / double arm db rdl": "https://www.youtube.com/watch?v=a318__AmzoU",
     "single leg/double arm db rdl": "https://www.youtube.com/watch?v=a318__AmzoU",
-    "keiser axe lift": "https://www.youtube.com/watch?v=w2CAHDUeR3M",
+    "keiser axe lift": "https://www.youtube.com/watch?v=YPk3PvzGUlI",
     "repeat vertical jump": "https://www.youtube.com/watch?v=xKuQr1O_XZU",
     "sb push-up position roll": "https://www.youtube.com/watch?v=Dvl4-ihU7XQ",
     "back squat": "https://www.youtube.com/watch?v=CWl0apMgshk",
@@ -12913,7 +12913,7 @@
     "horizontal jumps in a row": "https://www.youtube.com/watch?v=bHT0w3KADFI",
     "mb throw overhead": "https://www.youtube.com/watch?v=Pt5fFU_b_Xo",
     "single arm / leg db rdl": "https://www.youtube.com/watch?v=5do7-ykKIOQ",
-    "single leg tuck jump": "https://www.youtube.com/watch?v=5do7-ykKIOQ",
+    "single leg tuck jump": "https://www.youtube.com/watch?v=Ry8BKx7XhIw",
     "hanging straight leg raise": "https://www.youtube.com/watch?v=qUMucFqb2Ug",
     "jump squat": "https://www.youtube.com/watch?v=YGGq0AE5Uyc",
     "shoulder press": "https://www.youtube.com/watch?v=5yWaNOvgFCM",
@@ -16170,6 +16170,7 @@
     const [showCoach, setShowCoach] = (0, import_react.useState)(false);
     const [coachData, setCoachData] = (0, import_react.useState)([]);
     const [coachTab, setCoachTab] = (0, import_react.useState)("overview");
+    const [viewingAthlete, setViewingAthlete] = (0, import_react.useState)(null);
     const [coachPage, setCoachPage] = (0, import_react.useState)(null);
     const [restTimer, setRestTimer] = (0, import_react.useState)(null);
     const [restRunning, setRestRunning] = (0, import_react.useState)(false);
@@ -16739,6 +16740,7 @@
           await saveRunLog(wKey, entry);
           await completeWorkout(activeProg.id, activePhase.id, activeDay.id);
           setRunInput({ dist: "", mins: "", secs: "", notes: "", screenshot: null, screenshotName: "" });
+          setActiveDay(null);
         };
         const handleScreenshot = (e) => {
           const file = e.target.files[0];
@@ -17236,7 +17238,10 @@
         !isDone ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
           "button",
           {
-            onClick: () => completeWorkout(activeProg.id, activePhase.id, activeDay.id),
+            onClick: async () => {
+              await completeWorkout(activeProg.id, activePhase.id, activeDay.id);
+              setActiveDay(null);
+            },
             disabled: !isProgramLive() && !isCoachAccount,
             style: {
               width: "100%",
@@ -18296,6 +18301,124 @@
         ] })
       ] });
     };
+    const renderAthleteProfile = () => {
+      const u = viewingAthlete;
+      const cw = u.completedWorkouts || {};
+      const allProgsToShow = [SC_PROGRAM, DRIBBLING_PROGRAM, SHOOTING_PROGRAM, RUNNING_PROGRAM];
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "button",
+          {
+            onClick: () => setViewingAthlete(null),
+            style: { marginBottom: 16, fontSize: 13, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 },
+            children: "\u2190 Back"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 20, background: "#1E1E1E", borderRadius: 16, padding: "16px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: u.name, size: 52, bg: COLORS.primary }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { margin: "0 0 2px", fontSize: 20, fontWeight: 700, color: "#fff" }, children: u.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 4px", fontSize: 12, color: COLORS.textMuted }, children: u.email }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 14, fontWeight: 700, color: COLORS.primary }, children: [
+              u.xp || 0,
+              " XP"
+            ] })
+          ] })
+        ] }),
+        allProgsToShow.map((prog) => {
+          const progKeys = Object.keys(cw).filter((k) => k.startsWith(prog.id + "__"));
+          if (progKeys.length === 0 && prog.id === "running") return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 20 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", { style: { margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#fff" }, children: [
+              prog.icon,
+              " ",
+              prog.name
+            ] }),
+            prog.phases.map((phase) => {
+              const phaseKey = `${prog.id}__${phase.id}`;
+              const phaseDays = phase.days;
+              const fieldWork = phase.fieldWork || [];
+              const anyPhaseActivity = [...phaseDays, ...fieldWork].some((_, i) => {
+                const k = i < phaseDays.length ? `${phaseKey}__${phaseDays[i].id}` : `${phaseKey}__field_${i - phaseDays.length}`;
+                return !!cw[k];
+              });
+              const phaseUnlocked = anyPhaseActivity || phaseDays.some((d) => !!cw[`${phaseKey}__${d.id}`]);
+              if (!phaseUnlocked && prog.id !== "sc") return null;
+              const gymDone = phaseDays.filter((d) => !!cw[`${phaseKey}__${d.id}`]).length;
+              const gymTotal = phaseDays.length;
+              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 12, padding: "12px 14px", marginBottom: 8, border: `0.5px solid #3A3A3A` }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, fontWeight: 700, color: "#fff" }, children: phase.name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: COLORS.primary, fontWeight: 600 }, children: [
+                    gymDone,
+                    "/",
+                    gymTotal,
+                    " gym days"
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 4, background: "#2A2A2A", borderRadius: 2, overflow: "hidden", marginBottom: 10 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${gymTotal > 0 ? Math.round(gymDone / gymTotal * 100) : 0}%`, height: "100%", background: phase.color, borderRadius: 2 } }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexWrap: "wrap", gap: 6 }, children: [
+                  phaseDays.map((day) => {
+                    var _a2;
+                    const k = `${phaseKey}__${day.id}`;
+                    const done = !!cw[k];
+                    const completedAt = (_a2 = cw[k]) == null ? void 0 : _a2.completedAt;
+                    const dateStr = completedAt ? new Date(completedAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) : null;
+                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                      "div",
+                      {
+                        title: dateStr || "Not done",
+                        style: { padding: "4px 8px", borderRadius: 6, background: done ? `${phase.color}20` : "#2A2A2A", border: `1px solid ${done ? phase.color + "60" : "#3A3A3A"}`, fontSize: 11, color: done ? phase.color : COLORS.textMuted, fontWeight: done ? 600 : 400 },
+                        children: [
+                          done ? "\u2713 " : "",
+                          day.name.replace("Day ", "D").replace(" \u2014 Week ", " W"),
+                          dateStr && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 9, opacity: 0.7 }, children: [
+                            " ",
+                            dateStr
+                          ] })
+                        ]
+                      },
+                      day.id
+                    );
+                  }),
+                  fieldWork.map((fw, fi) => {
+                    const weekEntries = [1, 2, 3, 4].map((w) => {
+                      var _a2;
+                      const k = `${phaseKey}__field_${fw.type}_w${w}`;
+                      const done = !!cw[k];
+                      const completedAt = (_a2 = cw[k]) == null ? void 0 : _a2.completedAt;
+                      const dateStr = completedAt ? new Date(completedAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) : null;
+                      return { w, done, dateStr };
+                    });
+                    const typeColor = fw.type === "linear" ? "#3498DB" : "#E67E22";
+                    const typeLabel = fw.type === "linear" ? "\u26A1" : "\u2194\uFE0F";
+                    return weekEntries.map(({ w, done, dateStr }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                      "div",
+                      {
+                        title: dateStr || "Not done",
+                        style: { padding: "4px 8px", borderRadius: 6, background: done ? `${typeColor}20` : "#2A2A2A", border: `1px solid ${done ? typeColor + "60" : "#3A3A3A"}`, fontSize: 11, color: done ? typeColor : COLORS.textMuted, fontWeight: done ? 600 : 400 },
+                        children: [
+                          done ? "\u2713 " : "",
+                          typeLabel,
+                          " W",
+                          w,
+                          dateStr && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 9, opacity: 0.7 }, children: [
+                            " ",
+                            dateStr
+                          ] })
+                        ]
+                      },
+                      `${fi}-w${w}`
+                    ));
+                  })
+                ] })
+              ] }, phase.id);
+            })
+          ] }, prog.id);
+        }),
+        Object.keys(cw).length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", padding: "32px 0", color: COLORS.textMuted }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14 }, children: "No workouts completed yet." }) })
+      ] });
+    };
     const renderManagerDashboard = () => {
       if (!showManager) return null;
       const MANAGER_MENU = [
@@ -18371,7 +18494,7 @@
             const scDone = Object.keys(cw).filter((k) => k.startsWith("sc__")).length;
             const dribDone = Object.keys(cw).filter((k) => k.startsWith("dribble__")).length;
             const shotDone = Object.keys(cw).filter((k) => k.startsWith("shooting__")).length;
-            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 12, padding: "14px", border: `0.5px solid #3A3A3A` }, children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { onClick: () => setViewingAthlete(u), style: { background: "#1E1E1E", borderRadius: 12, padding: "14px", border: `0.5px solid #3A3A3A`, cursor: "pointer" }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: u.name, size: 40, bg: COLORS.primary }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
@@ -18391,7 +18514,8 @@
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 10, color: actColor, fontWeight: 700 }, children: [
                     "\u25CF ",
                     actLabel
-                  ] })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: COLORS.textMuted }, children: "\u203A" })
                 ] })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 6, background: "#2A2A2A", borderRadius: 3, overflow: "hidden", marginBottom: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${pct}%`, height: "100%", background: COLORS.primary, borderRadius: 3 } }) }),
@@ -19052,7 +19176,7 @@
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: isStaffUser ? "#161A16" : "#1E1E1E", borderRadius: 12, padding: "14px 14px", border: isStaffUser ? `1px solid ${staffColor}30` : `0.5px solid #3A3A3A`, opacity: isStaffUser ? 0.85 : 1 }, children: [
                     isStaffUser && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 8px", fontSize: 11, color: staffColor, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: staffLabel }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { onClick: () => setViewingAthlete(u), style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10, cursor: "pointer" }, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: u.name, size: 40, bg: isStaffUser ? staffColor : COLORS.primary }),
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 15, color: "#fff" }, children: u.name }),
@@ -19080,7 +19204,8 @@
                             "\u25CF ",
                             label
                           ] });
-                        })()
+                        })(),
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: COLORS.textMuted }, children: "\u203A" })
                       ] })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 6, background: "#2A2A2A", borderRadius: 3, overflow: "hidden", marginBottom: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${pct}%`, height: "100%", background: isStaffUser ? staffColor : COLORS.primary, borderRadius: 3 } }) }),
@@ -20010,6 +20135,7 @@
       renderHistoryModal(),
       renderCoachDashboard(),
       renderManagerDashboard(),
+      viewingAthlete && renderAthleteProfile(),
       renderAchievementPopup(),
       renderHowTo(),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
