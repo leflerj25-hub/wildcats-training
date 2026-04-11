@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260410-231940 -->
+  <!-- Wildcats Training v20260411-125116 -->
 </head>
 <body>
   <div id="root"></div>
@@ -18012,31 +18012,42 @@
           const medal = i === 0 ? "\u{1F947}" : i === 1 ? "\u{1F948}" : i === 2 ? "\u{1F949}" : null;
           const statVal = isRunBoard ? lbTab === "running_time" ? formatTime(athlete.totalSecs) : `${athlete.dist}km` : athlete[activeBoard.key];
           const statLabel = isRunBoard ? lbTab === "running_time" ? "5km time" : "distance" : "XP";
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
-            background: isMe ? COLORS.primaryLight : COLORS.surface,
-            border: isMe ? `1.5px solid ${COLORS.primary}` : `0.5px solid ${COLORS.border}`,
-            borderRadius: 12,
-            padding: "12px 16px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12
-          }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 18, width: 28, textAlign: "center", color: COLORS.textMuted, fontWeight: 500 }, children: medal || `#${i + 1}` }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: athlete.name, size: 36, bg: isMe ? COLORS.primary : "#1A1A1A" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 2px", fontWeight: isMe ? 600 : 400, fontSize: 14, color: "#fff" }, children: [
-                athlete.name,
-                " ",
-                isMe && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.primary }, children: "(you)" })
-              ] }),
-              !isRunBoard && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: xpLabel(athlete.overall) }),
-              isRunBoard && athlete.date && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: new Date(athlete.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "right" }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 16, color: isMe ? COLORS.primary : COLORS.text }, children: statVal }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: statLabel })
-            ] })
-          ] }, athlete.email);
+          const canViewProfile = isCoachAccount || isManagerAccount;
+          const athleteData = canViewProfile ? coachData.find((a) => a.email === athlete.email) : null;
+          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "div",
+            {
+              onClick: () => athleteData && setViewingAthlete(athleteData),
+              style: {
+                background: isMe ? COLORS.primaryLight : COLORS.surface,
+                border: isMe ? `1.5px solid ${COLORS.primary}` : `0.5px solid ${COLORS.border}`,
+                borderRadius: 12,
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                cursor: athleteData ? "pointer" : "default"
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 18, width: 28, textAlign: "center", color: COLORS.textMuted, fontWeight: 500 }, children: medal || `#${i + 1}` }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: athlete.name, size: 36, bg: isMe ? COLORS.primary : "#1A1A1A" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 2px", fontWeight: isMe ? 600 : 400, fontSize: 14, color: "#fff" }, children: [
+                    athlete.name,
+                    " ",
+                    isMe && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.primary }, children: "(you)" })
+                  ] }),
+                  !isRunBoard && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: xpLabel(athlete.overall) }),
+                  isRunBoard && athlete.date && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: new Date(athlete.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "right" }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 16, color: isMe ? COLORS.primary : COLORS.text }, children: statVal }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: statLabel })
+                ] })
+              ]
+            },
+            athlete.email
+          );
         }) })
       ] });
     };
@@ -18305,15 +18316,19 @@
       const u = viewingAthlete;
       const cw = u.completedWorkouts || {};
       const allProgsToShow = [SC_PROGRAM, DRIBBLING_PROGRAM, SHOOTING_PROGRAM, RUNNING_PROGRAM];
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-          "button",
-          {
-            onClick: () => setViewingAthlete(null),
-            style: { marginBottom: 16, fontSize: 13, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 },
-            children: "\u2190 Back"
-          }
-        ),
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "fixed", inset: 0, background: "#141414", zIndex: 995, overflowY: "auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "10px 0 16px", borderBottom: `1px solid ${COLORS.border}`, marginBottom: 20 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              onClick: () => setViewingAthlete(null),
+              style: { fontSize: 13, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0, flexShrink: 0 },
+              children: "\u2190 Back"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 15, fontWeight: 700, color: "#fff", flex: 1, textAlign: "center" }, children: "Athlete Profile" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 40 } })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 20, background: "#1E1E1E", borderRadius: 16, padding: "16px" }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: u.name, size: 52, bg: COLORS.primary }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
@@ -18417,7 +18432,7 @@
           ] }, prog.id);
         }),
         Object.keys(cw).length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", padding: "32px 0", color: COLORS.textMuted }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 14 }, children: "No workouts completed yet." }) })
-      ] });
+      ] }) });
     };
     const renderManagerDashboard = () => {
       if (!showManager) return null;
