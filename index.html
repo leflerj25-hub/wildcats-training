@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260413-130903 -->
+  <!-- Wildcats Training v20260413-132538 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16343,30 +16343,38 @@
         setWorkoutBuddies(buddies);
         const customChallenge = await loadData("wildcats:challenge:custom", true);
         const challenge = customChallenge || getWeeklyChallenge();
+        const nowDate = /* @__PURE__ */ new Date();
+        const dayOfWeek = nowDate.getDay();
+        const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        const weekStart = new Date(nowDate);
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(nowDate.getDate() - daysSinceMonday);
+        const weekStartMs = weekStart.getTime();
         let current = 0;
         const allUsers = Object.values(users);
+        const thisWeekCW = (u) => Object.entries(u.completedWorkouts || {}).filter(([k, v]) => v.completedAt && v.completedAt >= weekStartMs);
         if (challenge.type === "workouts") {
-          current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("sc__")).length, 0);
+          current = allUsers.reduce((s, u) => s + thisWeekCW(u).filter(([k]) => k.startsWith("sc__")).length, 0);
         } else if (challenge.type === "xp") {
           current = allUsers.reduce((s, u) => s + (u.xp || 0), 0);
         } else if (challenge.type === "fieldwork") {
-          current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.includes("field_")).length, 0);
+          current = allUsers.reduce((s, u) => s + thisWeekCW(u).filter(([k]) => k.includes("field_")).length, 0);
         } else if (challenge.type === "dribble") {
-          current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("dribble__")).length, 0);
+          current = allUsers.reduce((s, u) => s + thisWeekCW(u).filter(([k]) => k.startsWith("dribble__")).length, 0);
         } else if (challenge.type === "shooting") {
-          current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("shooting__")).length, 0);
+          current = allUsers.reduce((s, u) => s + thisWeekCW(u).filter(([k]) => k.startsWith("shooting__")).length, 0);
         } else if (challenge.type === "running") {
-          current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("running__")).length, 0);
+          current = allUsers.reduce((s, u) => s + thisWeekCW(u).filter(([k]) => k.startsWith("running__")).length, 0);
         }
         const streakData = await loadData("wildcats:challenge:streak", true) || { streak: 0, lastCompletedWeek: null };
         const isComplete = current >= challenge.goal;
         const currentWeekKey = (() => {
           const now = /* @__PURE__ */ new Date();
           const day = now.getDay();
-          const daysSinceMonday = day === 0 ? 6 : day - 1;
+          const daysSinceMonday2 = day === 0 ? 6 : day - 1;
           const monday = new Date(now);
           monday.setHours(0, 0, 0, 0);
-          monday.setDate(now.getDate() - daysSinceMonday);
+          monday.setDate(now.getDate() - daysSinceMonday2);
           return monday.toISOString().split("T")[0];
         })();
         if (isComplete && streakData.lastCompletedWeek !== currentWeekKey) {
@@ -17826,7 +17834,12 @@
             challengeStreak > 0 ? `${challengeStreak}-week streak \u{1F525}` : "Great work team!"
           ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "5px 0 0", fontSize: 11, color: COLORS.textMuted }, children: [
             Math.round(teamChallenge.current / teamChallenge.goal * 100),
-            "% complete \u2014 every workout counts!"
+            "% complete \u2014 every workout counts!",
+            challengeStreak > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: "#FF6B35" }, children: [
+              " Keep the ",
+              challengeStreak,
+              "-week streak alive \u{1F525}"
+            ] })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: streak > 0 ? "1fr 1fr" : "1fr", gap: 10, marginBottom: 14 }, children: [
@@ -19270,103 +19283,70 @@
                         "% done"
                       ] })
                     ] }),
-                    !isStaffUser && unlockingAthlete === u.email && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderTop: `1px solid #2A2A2A`, paddingTop: 12, marginBottom: 8 }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#3498DB" }, children: "\u{1F513} Manage Workouts" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 10px", fontSize: 11, color: COLORS.textMuted }, children: "Unlock individual workouts or entire phases. No XP awarded for coach unlocks." }),
-                      ALL_PROGRAMS.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 14 }, children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#fff" }, children: [
-                          prog.icon,
-                          " ",
-                          prog.name
-                        ] }),
-                        prog.phases.map((phase, pi) => {
-                          const phaseKey = `${prog.id}__${phase.id}`;
-                          const allDays = phase.days;
-                          const phaseDone = allDays.every((d) => !!cw[`${phaseKey}__${d.id}`]);
-                          const phaseAnyDone = allDays.some((d) => !!cw[`${phaseKey}__${d.id}`]);
-                          const [expanded, setExpanded] = React.useState(false);
-                          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 6, background: "#1E1E1E", borderRadius: 10, overflow: "hidden", border: `0.5px solid #3A3A3A` }, children: [
-                            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", padding: "8px 10px", gap: 8 }, children: [
-                              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                                "button",
-                                {
-                                  onClick: () => setExpanded((e) => !e),
-                                  style: { flex: 1, textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 12, color: phaseDone ? "#4CAF82" : phaseAnyDone ? COLORS.primary : "#fff", fontWeight: 600, padding: 0 },
-                                  children: [
-                                    expanded ? "\u25BE" : "\u25B8",
-                                    " ",
-                                    phaseDone ? "\u2713 " : "",
-                                    phase.name
-                                  ]
-                                }
-                              ),
-                              !phaseDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
-                                if (!window.confirm(`Unlock all of ${phase.name} for ${u.name}?`)) return;
-                                const newCW = { ...cw };
-                                allDays.forEach((d) => {
-                                  const k = `${phaseKey}__${d.id}`;
-                                  if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
-                                });
-                                (phase.fieldWork || []).forEach((fw, fi) => {
-                                  const k = `${phaseKey}__field_${fi}`;
-                                  if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
-                                });
-                                const users = await loadData("wildcats:users", true) || {};
-                                if (users[u.email]) {
-                                  users[u.email].completedWorkouts = newCW;
-                                  await saveData("wildcats:users", users, true);
-                                }
-                                setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
-                              }, style: { fontSize: 10, padding: "3px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 5, cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }, children: "Unlock All" }),
-                              phaseDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
-                                if (!window.confirm(`Re-lock ${phase.name} for ${u.name}?`)) return;
-                                await relockPhaseForAthlete(u, prog, phase);
-                              }, style: { fontSize: 10, padding: "3px 8px", background: "#3A1A1A", color: "#E05555", border: "1px solid #E0555530", borderRadius: 5, cursor: "pointer" }, children: "Re-lock" })
-                            ] }),
-                            expanded && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderTop: `1px solid #2A2A2A`, padding: "6px 10px 8px" }, children: [
-                              allDays.map((day) => {
-                                const k = `${phaseKey}__${day.id}`;
-                                const done2 = !!cw[k];
-                                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: `0.5px solid #2A2A2A` }, children: [
-                                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11, color: done2 ? "#4CAF82" : COLORS.textMuted }, children: [
-                                    done2 ? "\u2713 " : "",
-                                    day.name
-                                  ] }),
-                                  !done2 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
-                                    const newCW = { ...cw, [k]: { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true } };
-                                    const users = await loadData("wildcats:users", true) || {};
-                                    if (users[u.email]) {
-                                      users[u.email].completedWorkouts = newCW;
-                                      await saveData("wildcats:users", users, true);
-                                    }
-                                    setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
-                                  }, style: { fontSize: 10, padding: "2px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 4, cursor: "pointer", fontWeight: 600 }, children: "Unlock" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
-                                    var _a3;
-                                    const newCW = { ...cw };
-                                    const xpToRemove = ((_a3 = newCW[k]) == null ? void 0 : _a3.noXP) ? 0 : 50;
-                                    delete newCW[k];
-                                    const users = await loadData("wildcats:users", true) || {};
-                                    if (users[u.email]) {
-                                      users[u.email].completedWorkouts = newCW;
-                                      users[u.email].xp = Math.max(0, (users[u.email].xp || 0) - xpToRemove);
-                                      await saveData("wildcats:users", users, true);
-                                      await saveData(`wildcats:lb:${u.email}`, { email: u.email, name: u.name, xp: users[u.email].xp }, true);
-                                    }
-                                    setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW, xp: Math.max(0, (a.xp || 0) - xpToRemove) } : a));
-                                  }, style: { fontSize: 10, padding: "2px 8px", background: "#3A1A1A", color: "#E05555", border: "1px solid #E0555530", borderRadius: 4, cursor: "pointer" }, children: "Re-lock" })
-                                ] }, day.id);
-                              }),
-                              (phase.fieldWork || []).filter((fw) => !(fw.type === "linear" && phase.id === "may")).map((fw) => {
-                                const typeLabel = fw.type === "linear" ? "\u26A1 Linear" : "\u2194\uFE0F Lateral";
-                                return [1, 2, 3, 4].map((w) => {
-                                  const k = `${phaseKey}__field_${fw.type}_w${w}`;
+                    !isStaffUser && unlockingAthlete === u.email && (() => {
+                      const [expandedPhases, setExpandedPhases] = React.useState({});
+                      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderTop: `1px solid #2A2A2A`, paddingTop: 12, marginBottom: 8 }, children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#3498DB" }, children: "\u{1F513} Manage Workouts" }),
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 10px", fontSize: 11, color: COLORS.textMuted }, children: "Unlock individual workouts or entire phases. No XP awarded for coach unlocks." }),
+                        ALL_PROGRAMS.map((prog) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 14 }, children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#fff" }, children: [
+                            prog.icon,
+                            " ",
+                            prog.name
+                          ] }),
+                          prog.phases.map((phase, pi) => {
+                            const phaseKey = `${prog.id}__${phase.id}`;
+                            const allDays = phase.days;
+                            const phaseDone = allDays.every((d) => !!cw[`${phaseKey}__${d.id}`]);
+                            const phaseAnyDone = allDays.some((d) => !!cw[`${phaseKey}__${d.id}`]);
+                            const expandKey = `${prog.id}_${phase.id}`;
+                            const expanded = !!expandedPhases[expandKey];
+                            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: 6, background: "#1E1E1E", borderRadius: 10, overflow: "hidden", border: `0.5px solid #3A3A3A` }, children: [
+                              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", padding: "8px 10px", gap: 8 }, children: [
+                                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                                  "button",
+                                  {
+                                    onClick: () => setExpandedPhases((p) => ({ ...p, [expandKey]: !p[expandKey] })),
+                                    style: { flex: 1, textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: 12, color: phaseDone ? "#4CAF82" : phaseAnyDone ? COLORS.primary : "#fff", fontWeight: 600, padding: 0 },
+                                    children: [
+                                      expanded ? "\u25BE" : "\u25B8",
+                                      " ",
+                                      phaseDone ? "\u2713 " : "",
+                                      phase.name
+                                    ]
+                                  }
+                                ),
+                                !phaseDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                                  if (!window.confirm(`Unlock all of ${phase.name} for ${u.name}?`)) return;
+                                  const newCW = { ...cw };
+                                  allDays.forEach((d) => {
+                                    const k = `${phaseKey}__${d.id}`;
+                                    if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
+                                  });
+                                  (phase.fieldWork || []).forEach((fw, fi) => {
+                                    const k = `${phaseKey}__field_${fi}`;
+                                    if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
+                                  });
+                                  const users = await loadData("wildcats:users", true) || {};
+                                  if (users[u.email]) {
+                                    users[u.email].completedWorkouts = newCW;
+                                    await saveData("wildcats:users", users, true);
+                                  }
+                                  setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
+                                }, style: { fontSize: 10, padding: "3px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 5, cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }, children: "Unlock All" }),
+                                phaseDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                                  if (!window.confirm(`Re-lock ${phase.name} for ${u.name}?`)) return;
+                                  await relockPhaseForAthlete(u, prog, phase);
+                                }, style: { fontSize: 10, padding: "3px 8px", background: "#3A1A1A", color: "#E05555", border: "1px solid #E0555530", borderRadius: 5, cursor: "pointer" }, children: "Re-lock" })
+                              ] }),
+                              expanded && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderTop: `1px solid #2A2A2A`, padding: "6px 10px 8px" }, children: [
+                                allDays.map((day) => {
+                                  const k = `${phaseKey}__${day.id}`;
                                   const done2 = !!cw[k];
-                                  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: "0.5px solid #2A2A2A" }, children: [
+                                  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: `0.5px solid #2A2A2A` }, children: [
                                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11, color: done2 ? "#4CAF82" : COLORS.textMuted }, children: [
                                       done2 ? "\u2713 " : "",
-                                      typeLabel,
-                                      " \u2014 Week ",
-                                      w
+                                      day.name
                                     ] }),
                                     !done2 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
                                       const newCW = { ...cw, [k]: { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true } };
@@ -19376,15 +19356,52 @@
                                         await saveData("wildcats:users", users, true);
                                       }
                                       setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
-                                    }, style: { fontSize: 10, padding: "2px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 4, cursor: "pointer", fontWeight: 600 }, children: "Unlock" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#4CAF82" }, children: "Done \u2713" })
-                                  ] }, `${fw.type}-w${w}`);
-                                });
-                              })
-                            ] })
-                          ] }, phase.id);
-                        })
-                      ] }, prog.id))
-                    ] }),
+                                    }, style: { fontSize: 10, padding: "2px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 4, cursor: "pointer", fontWeight: 600 }, children: "Unlock" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                                      var _a3;
+                                      const newCW = { ...cw };
+                                      const xpToRemove = ((_a3 = newCW[k]) == null ? void 0 : _a3.noXP) ? 0 : 50;
+                                      delete newCW[k];
+                                      const users = await loadData("wildcats:users", true) || {};
+                                      if (users[u.email]) {
+                                        users[u.email].completedWorkouts = newCW;
+                                        users[u.email].xp = Math.max(0, (users[u.email].xp || 0) - xpToRemove);
+                                        await saveData("wildcats:users", users, true);
+                                        await saveData(`wildcats:lb:${u.email}`, { email: u.email, name: u.name, xp: users[u.email].xp }, true);
+                                      }
+                                      setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW, xp: Math.max(0, (a.xp || 0) - xpToRemove) } : a));
+                                    }, style: { fontSize: 10, padding: "2px 8px", background: "#3A1A1A", color: "#E05555", border: "1px solid #E0555530", borderRadius: 4, cursor: "pointer" }, children: "Re-lock" })
+                                  ] }, day.id);
+                                }),
+                                (phase.fieldWork || []).filter((fw) => !(fw.type === "linear" && phase.id === "may")).map((fw) => {
+                                  const typeLabel = fw.type === "linear" ? "\u26A1 Linear" : "\u2194\uFE0F Lateral";
+                                  return [1, 2, 3, 4].map((w) => {
+                                    const k = `${phaseKey}__field_${fw.type}_w${w}`;
+                                    const done2 = !!cw[k];
+                                    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: "0.5px solid #2A2A2A" }, children: [
+                                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 11, color: done2 ? "#4CAF82" : COLORS.textMuted }, children: [
+                                        done2 ? "\u2713 " : "",
+                                        typeLabel,
+                                        " \u2014 Week ",
+                                        w
+                                      ] }),
+                                      !done2 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                                        const newCW = { ...cw, [k]: { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true } };
+                                        const users = await loadData("wildcats:users", true) || {};
+                                        if (users[u.email]) {
+                                          users[u.email].completedWorkouts = newCW;
+                                          await saveData("wildcats:users", users, true);
+                                        }
+                                        setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
+                                      }, style: { fontSize: 10, padding: "2px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 4, cursor: "pointer", fontWeight: 600 }, children: "Unlock" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#4CAF82" }, children: "Done \u2713" })
+                                    ] }, `${fw.type}-w${w}`);
+                                  });
+                                })
+                              ] })
+                            ] }, phase.id);
+                          })
+                        ] }, prog.id))
+                      ] });
+                    })(),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 8 }, children: [
                       !isStaffUser && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                         "button",
@@ -20136,12 +20153,19 @@
           const challenge = getWeeklyChallenge();
           let current = 0;
           const allUsers = Object.values(users);
-          if (challenge.type === "workouts") current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("sc__")).length, 0);
+          const nowDate2 = /* @__PURE__ */ new Date();
+          const dow2 = nowDate2.getDay();
+          const weekStart2 = new Date(nowDate2);
+          weekStart2.setHours(0, 0, 0, 0);
+          weekStart2.setDate(nowDate2.getDate() - (dow2 === 0 ? 6 : dow2 - 1));
+          const wMs2 = weekStart2.getTime();
+          const thisWeek2 = (u) => Object.entries(u.completedWorkouts || {}).filter(([k, v]) => v.completedAt && v.completedAt >= wMs2);
+          if (challenge.type === "workouts") current = allUsers.reduce((s, u) => s + thisWeek2(u).filter(([k]) => k.startsWith("sc__")).length, 0);
           else if (challenge.type === "xp") current = allUsers.reduce((s, u) => s + (u.xp || 0), 0);
-          else if (challenge.type === "fieldwork") current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.includes("field_")).length, 0);
-          else if (challenge.type === "dribble") current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("dribble__")).length, 0);
-          else if (challenge.type === "shooting") current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("shooting__")).length, 0);
-          else if (challenge.type === "running") current = allUsers.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith("running__")).length, 0);
+          else if (challenge.type === "fieldwork") current = allUsers.reduce((s, u) => s + thisWeek2(u).filter(([k]) => k.includes("field_")).length, 0);
+          else if (challenge.type === "dribble") current = allUsers.reduce((s, u) => s + thisWeek2(u).filter(([k]) => k.startsWith("dribble__")).length, 0);
+          else if (challenge.type === "shooting") current = allUsers.reduce((s, u) => s + thisWeek2(u).filter(([k]) => k.startsWith("shooting__")).length, 0);
+          else if (challenge.type === "running") current = allUsers.reduce((s, u) => s + thisWeek2(u).filter(([k]) => k.startsWith("running__")).length, 0);
           setTeamChallenge({ ...challenge, current: Math.min(current, challenge.goal) });
           await new Promise((r) => setTimeout(r, 800));
         } catch (e) {
