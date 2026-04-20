@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260414-173642 -->
+  <!-- Wildcats Training v20260420-173922 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16304,6 +16304,7 @@
     const [editingExercise, setEditingExercise] = (0, import_react.useState)(null);
     const [coachNotes, setCoachNotes] = (0, import_react.useState)({});
     const [customVideos, setCustomVideos] = (0, import_react.useState)({});
+    const [editingVideo, setEditingVideo] = (0, import_react.useState)(null);
     const [phaseOverrides, setPhaseOverrides] = (0, import_react.useState)({});
     const [exerciseOverrides, setExerciseOverrides] = (0, import_react.useState)({});
     const [selectedAchievement, setSelectedAchievement] = (0, import_react.useState)(null);
@@ -17264,6 +17265,15 @@
                         title: "Watch on YouTube",
                         style: { display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: "var(--border-radius-md)", background: "#FF000018", color: "#CC0000", textDecoration: "none", fontSize: 14, flexShrink: 0 },
                         children: "\u25B6"
+                      }
+                    ),
+                    isCoachAccount && isScProgram && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                      "button",
+                      {
+                        onClick: () => setEditingVideo({ name: ex.name, url: customVideos[ex.name] || getYouTubeLink(ex.name) || "" }),
+                        title: "Edit video link",
+                        style: { display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 6, background: customVideos[ex.name] ? "#B8962E20" : "#2A2A2A", border: `1px solid ${customVideos[ex.name] ? "#B8962E50" : "#3A3A3A"}`, cursor: "pointer", fontSize: 12, color: customVideos[ex.name] ? "#B8962E" : COLORS.textMuted, flexShrink: 0 },
+                        children: "\u270F\uFE0F"
                       }
                     ),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
@@ -19013,6 +19023,72 @@
       }
       setCoachData((prev) => prev.map((a) => a.email === athlete.email ? { ...a, completedWorkouts: newCW, xp: newXP } : a));
     };
+    const renderVideoEditSheet = () => {
+      if (!editingVideo) return null;
+      const hasDefault = !!getYouTubeLink(editingVideo.name);
+      const hasCustom = !!customVideos[editingVideo.name];
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "div",
+        {
+          style: { position: "fixed", inset: 0, zIndex: 1e3, display: "flex", flexDirection: "column", justifyContent: "flex-end" },
+          onClick: () => setEditingVideo(null),
+          children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "div",
+            {
+              onClick: (e) => e.stopPropagation(),
+              style: { background: "#1E1E1E", borderRadius: "20px 20px 0 0", padding: "20px 16px 32px", border: `1px solid ${COLORS.border}`, maxWidth: 640, width: "100%", margin: "0 auto" },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 36, height: 4, background: "#3A3A3A", borderRadius: 2, margin: "0 auto 16px" } }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 4px", fontSize: 11, color: COLORS.primary, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: "Edit Video Link" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 14px", fontSize: 14, fontWeight: 700, color: "#fff" }, children: editingVideo.name }),
+                hasDefault && !hasCustom && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 10px", fontSize: 11, color: COLORS.textMuted }, children: [
+                  "Default: ",
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: getYouTubeLink(editingVideo.name), target: "_blank", rel: "noopener noreferrer", style: { color: "#CC0000" }, children: "Current video \u25B6" })
+                ] }),
+                hasCustom && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 10px", fontSize: 11, color: COLORS.primary }, children: [
+                  "Custom override active: ",
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: customVideos[editingVideo.name], target: "_blank", rel: "noopener noreferrer", style: { color: "#CC0000" }, children: "Preview \u25B6" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  "input",
+                  {
+                    autoFocus: true,
+                    value: editingVideo.url,
+                    onChange: (e) => setEditingVideo((v) => ({ ...v, url: e.target.value })),
+                    placeholder: "https://youtube.com/watch?v=...",
+                    style: { width: "100%", fontSize: 13, marginBottom: 12 }
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 8 }, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                    const url = editingVideo.url.trim();
+                    const updated = { ...customVideos, [editingVideo.name]: url };
+                    setCustomVideos(updated);
+                    await saveData("wildcats:customvideos", updated, true);
+                    setEditingVideo(null);
+                  }, style: { flex: 1, padding: "11px 0", background: COLORS.primary, color: "#fff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer" }, children: "Save" }),
+                  hasCustom && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
+                    const updated = { ...customVideos };
+                    delete updated[editingVideo.name];
+                    setCustomVideos(updated);
+                    await saveData("wildcats:customvideos", updated, true);
+                    setEditingVideo(null);
+                  }, style: { padding: "11px 14px", background: "#3A1A1A", color: "#E05555", border: "1px solid #E0555530", borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: "pointer" }, children: "Remove Override" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "button",
+                    {
+                      onClick: () => setEditingVideo(null),
+                      style: { padding: "11px 14px", background: "#2A2A2A", color: COLORS.textMuted, border: "none", borderRadius: 10, fontSize: 13, cursor: "pointer" },
+                      children: "Cancel"
+                    }
+                  )
+                ] })
+              ]
+            }
+          )
+        }
+      );
+    };
     const renderPRToast = () => prCelebration && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)", zIndex: 997, background: "#1A1A1A", border: `2px solid #FFD700`, borderRadius: 18, padding: "16px 22px", display: "flex", alignItems: "center", gap: 14, boxShadow: "0 0 40px #FFD70070", minWidth: 240, maxWidth: 320 }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 36 }, children: "\u{1F3C6}" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
@@ -20305,6 +20381,7 @@
       renderPhaseReadiness(),
       renderScheduleModal(),
       renderHistoryModal(),
+      renderVideoEditSheet(),
       renderCoachDashboard(),
       renderManagerDashboard(),
       viewingAthlete && renderAthleteProfile(),
