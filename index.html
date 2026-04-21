@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260420-173922 -->
+  <!-- Wildcats Training v20260421-174014 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16485,35 +16485,29 @@
         }
         const streakData = await loadData("wildcats:challenge:streak", true);
         if (!streakData) {
-          const prevWeekKey = (() => {
-            const now = /* @__PURE__ */ new Date();
-            const day = now.getDay();
-            const daysSinceMonday2 = day === 0 ? 6 : day - 1;
-            const monday = new Date(now);
-            monday.setHours(0, 0, 0, 0);
-            monday.setDate(now.getDate() - daysSinceMonday2 - 7);
-            return monday.toISOString().split("T")[0];
-          })();
-          const seedData = { streak: 1, lastCompletedWeek: prevWeekKey };
-          await saveData("wildcats:challenge:streak", seedData, true);
-          setChallengeStreak(1);
+          await saveData("wildcats:challenge:streak", { streak: 0, lastCompletedWeek: null }, true);
+          setChallengeStreak(0);
         } else {
           const sd = streakData;
           const isComplete = current >= challenge.goal;
-          const currentWeekKey = (() => {
+          const getWeekKey = (offsetWeeks = 0) => {
             const now = /* @__PURE__ */ new Date();
             const day = now.getDay();
             const daysSinceMonday2 = day === 0 ? 6 : day - 1;
             const monday = new Date(now);
             monday.setHours(0, 0, 0, 0);
-            monday.setDate(now.getDate() - daysSinceMonday2);
+            monday.setDate(now.getDate() - daysSinceMonday2 - offsetWeeks * 7);
             return monday.toISOString().split("T")[0];
-          })();
+          };
+          const currentWeekKey = getWeekKey(0);
+          const prevWeekKey = getWeekKey(1);
           if (isComplete && sd.lastCompletedWeek !== currentWeekKey) {
             const newStreak = (sd.streak || 0) + 1;
-            const newStreakData = { streak: newStreak, lastCompletedWeek: currentWeekKey };
-            await saveData("wildcats:challenge:streak", newStreakData, true);
+            await saveData("wildcats:challenge:streak", { streak: newStreak, lastCompletedWeek: currentWeekKey }, true);
             setChallengeStreak(newStreak);
+          } else if (!isComplete && sd.lastCompletedWeek !== currentWeekKey && sd.lastCompletedWeek !== prevWeekKey) {
+            await saveData("wildcats:challenge:streak", { streak: 0, lastCompletedWeek: sd.lastCompletedWeek }, true);
+            setChallengeStreak(0);
           } else {
             setChallengeStreak(sd.streak || 0);
           }
@@ -17946,41 +17940,36 @@
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff" }, children: workoutBuddies.length === 1 ? `${workoutBuddies[0]} already put in work today!` : workoutBuddies.length === 2 ? `${workoutBuddies[0]} and ${workoutBuddies[1]} are putting in work!` : `${workoutBuddies[0]}, ${workoutBuddies[1]} +${workoutBuddies.length - 2} others are grinding today!` })
           ] })
         ] }),
-        teamChallenge && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 11, color: "#3498DB", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: [
-              { workouts: "\u{1F4AA}", xp: "\u2B50", fieldwork: "\u26A1", dribble: "\u{1F3C0}", shooting: "\u{1F3AF}", running: "\u{1F3C3}" }[teamChallenge.type] || "\u{1F3C6}",
-              " ",
-              "Weekly Team Challenge"
+        teamChallenge && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 14, overflow: "hidden", marginBottom: 14 }, children: [
+          challengeStreak > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "linear-gradient(90deg, #FF6B35, #FFD700)", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 13, fontWeight: 800, color: "#000" }, children: [
+              "\u{1F525} ",
+              challengeStreak,
+              "-WEEK TEAM STREAK"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-              challengeStreak > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: "#FFD700", fontWeight: 700 }, children: [
-                "\u{1F525} ",
-                challengeStreak,
-                "W streak"
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, fontWeight: 700, color: "#000", opacity: 0.7 }, children: "Keep it going!" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "14px 16px" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 11, color: "#3498DB", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: [
+                { workouts: "\u{1F4AA}", xp: "\u2B50", fieldwork: "\u26A1", dribble: "\u{1F3C0}", shooting: "\u{1F3AF}", running: "\u{1F3C3}" }[teamChallenge.type] || "\u{1F3C6}",
+                " ",
+                "Weekly Team Challenge"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: COLORS.textMuted, fontWeight: 600 }, children: [
                 teamChallenge.current,
                 "/",
                 teamChallenge.goal
               ] })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 8px", fontSize: 13, color: "#fff", fontWeight: 600 }, children: [
-            "Team goal: ",
-            teamChallenge.label
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 8, background: "#2A2A2A", borderRadius: 4, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${Math.round(teamChallenge.current / teamChallenge.goal * 100)}%`, height: "100%", background: teamChallenge.current >= teamChallenge.goal ? "linear-gradient(90deg, #4CAF82, #B8962E)" : "linear-gradient(90deg, #3498DB, #B8962E)", borderRadius: 4, transition: "width 0.5s" } }) }),
-          teamChallenge.current >= teamChallenge.goal ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "5px 0 0", fontSize: 11, color: "#4CAF82", fontWeight: 700 }, children: [
-            "\u2705 Challenge complete! ",
-            challengeStreak > 0 ? `${challengeStreak}-week streak \u{1F525}` : "Great work team!"
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "5px 0 0", fontSize: 11, color: COLORS.textMuted }, children: [
-            Math.round(teamChallenge.current / teamChallenge.goal * 100),
-            "% complete \u2014 every workout counts!",
-            challengeStreak > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: "#FF6B35" }, children: [
-              " Keep the ",
-              challengeStreak,
-              "-week streak alive \u{1F525}"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 8px", fontSize: 14, color: "#fff", fontWeight: 700 }, children: [
+              "Team goal: ",
+              teamChallenge.label
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 8, background: "#2A2A2A", borderRadius: 4, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${Math.round(teamChallenge.current / teamChallenge.goal * 100)}%`, height: "100%", background: teamChallenge.current >= teamChallenge.goal ? "linear-gradient(90deg, #4CAF82, #B8962E)" : "linear-gradient(90deg, #3498DB, #B8962E)", borderRadius: 4, transition: "width 0.5s" } }) }),
+            teamChallenge.current >= teamChallenge.goal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "6px 0 0", fontSize: 12, color: "#4CAF82", fontWeight: 700 }, children: "\u2705 Challenge complete this week!" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "6px 0 0", fontSize: 11, color: COLORS.textMuted }, children: [
+              Math.round(teamChallenge.current / teamChallenge.goal * 100),
+              "% complete \u2014 every workout counts!"
             ] })
           ] })
         ] }),
