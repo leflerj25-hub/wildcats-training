@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260429-022413 -->
+  <!-- Wildcats Training v20260429-112019 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16116,6 +16116,63 @@
         })
       ] }, prog.id))
     ] });
+  }
+  function calcStreak(completedWorkouts) {
+    if (!completedWorkouts || Object.keys(completedWorkouts).length === 0) return 0;
+    const timestamps = Object.values(completedWorkouts).map((w) => w.completedAt).filter(Boolean).sort((a, b) => b - a);
+    if (!timestamps.length) return 0;
+    let streak = 0;
+    let checkDate = /* @__PURE__ */ new Date();
+    checkDate.setHours(0, 0, 0, 0);
+    const mostRecent = new Date(timestamps[0]);
+    mostRecent.setHours(0, 0, 0, 0);
+    const diffDays = Math.floor((checkDate - mostRecent) / 864e5);
+    if (diffDays > 1) return 0;
+    checkDate = mostRecent;
+    const uniqueDays = [...new Set(timestamps.map((t) => {
+      const d = new Date(t);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    }))].sort((a, b) => b - a);
+    for (const dayTs of uniqueDays) {
+      const day = new Date(dayTs);
+      if (day.getTime() === checkDate.getTime()) {
+        streak++;
+        checkDate = new Date(checkDate.getTime() - 864e5);
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+  var ACHIEVEMENTS = [
+    { id: "first_workout", label: "First Workout", desc: "Complete your first workout", icon: "\u{1F3CB}\uFE0F", xpThreshold: 0, workoutCount: 1 },
+    { id: "week_warrior", label: "Week Warrior", desc: "Complete 7 workouts", icon: "\u{1F4C5}", xpThreshold: 0, workoutCount: 7 },
+    { id: "iron_will", label: "Iron Will", desc: "Complete 20 workouts", icon: "\u{1F4AA}", xpThreshold: 0, workoutCount: 20 },
+    { id: "xp_500", label: "500 XP Club", desc: "Earn 500 XP", icon: "\u2B50", xpThreshold: 500, workoutCount: 0 },
+    { id: "xp_1000", label: "1000 XP Club", desc: "Earn 1,000 XP", icon: "\u{1F31F}", xpThreshold: 1e3, workoutCount: 0 },
+    { id: "streak_3", label: "On Fire", desc: "3-day workout streak", icon: "\u{1F525}", xpThreshold: 0, workoutCount: 0, streakRequired: 3 },
+    { id: "streak_7", label: "Week Streak", desc: "7-day workout streak", icon: "\u{1F680}", xpThreshold: 0, workoutCount: 0, streakRequired: 7 },
+    { id: "phase1_done", label: "Phase 1 Complete", desc: "Finish all of Phase 1 S&C", icon: "\u{1F949}", xpThreshold: 0, workoutCount: 0, phaseId: "may" },
+    { id: "phase2_done", label: "Phase 2 Complete", desc: "Finish all of Phase 2 S&C", icon: "\u{1F948}", xpThreshold: 0, workoutCount: 0, phaseId: "jun" },
+    { id: "phase3_done", label: "Phase 3 Complete", desc: "Finish all of Phase 3 S&C", icon: "\u{1F947}", xpThreshold: 0, workoutCount: 0, phaseId: "jul" },
+    { id: "phase4_done", label: "Summer Complete", desc: "Finish all of Phase 4 S&C", icon: "\u{1F3C6}", xpThreshold: 0, workoutCount: 0, phaseId: "aug" }
+  ];
+  function getEarnedAchievements(completedWorkouts, streak) {
+    if (!completedWorkouts) return [];
+    const workoutCount = Object.keys(completedWorkouts).length;
+    const xp = Object.values(completedWorkouts).reduce((s, w) => s + (w.xp || 0), 0);
+    return ACHIEVEMENTS.filter((a) => {
+      if (a.workoutCount && workoutCount < a.workoutCount) return false;
+      if (a.xpThreshold && xp < a.xpThreshold) return false;
+      if (a.streakRequired && streak < a.streakRequired) return false;
+      if (a.phaseId) {
+        const phaseKey = `sc__${a.phaseId}`;
+        const phaseDone = Object.keys(completedWorkouts).filter((k) => k.startsWith(phaseKey)).length;
+        if (phaseDone === 0) return false;
+      }
+      return true;
+    });
   }
   function App() {
     var _a, _b, _c;
