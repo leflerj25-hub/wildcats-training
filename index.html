@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260429-022057 -->
+  <!-- Wildcats Training v20260429-022413 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16620,7 +16620,7 @@
       setRestRunning(false);
       setRestTimer(null);
     };
-    const loadCoachData = async () => {
+    async function loadCoachData() {
       const users = await loadData("wildcats:users", true) || {};
       const athleteList = Object.values(users);
       const withData = await Promise.all(athleteList.map(async (u) => {
@@ -16631,7 +16631,8 @@
       setCoachData(withData);
       const cfg = await loadData("wildcats:config", true) || {};
       setProgramConfig(cfg);
-    };
+    }
+    ;
     const finishOnboarding = async () => {
       setShowOnboarding(false);
       setOnboarded(true);
