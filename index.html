@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260430-142019 -->
+  <!-- Wildcats Training v20260504-194246 -->
 </head>
 <body>
   <div id="root"></div>
@@ -494,7 +494,7 @@
       exports.useTransition = function() {
         return ReactSharedInternals.H.useTransition();
       };
-      exports.version = "19.2.4";
+      exports.version = "19.2.5";
     }
   });
 
@@ -940,7 +940,7 @@
       exports.useFormStatus = function() {
         return ReactSharedInternals.H.useHostTransitionStatus();
       };
-      exports.version = "19.2.4";
+      exports.version = "19.2.5";
     }
   });
 
@@ -12613,12 +12613,12 @@
         }
       };
       var isomorphicReactPackageVersion$jscomp$inline_1840 = React2.version;
-      if ("19.2.4" !== isomorphicReactPackageVersion$jscomp$inline_1840)
+      if ("19.2.5" !== isomorphicReactPackageVersion$jscomp$inline_1840)
         throw Error(
           formatProdErrorMessage(
             527,
             isomorphicReactPackageVersion$jscomp$inline_1840,
-            "19.2.4"
+            "19.2.5"
           )
         );
       ReactDOMSharedInternals.findDOMNode = function(componentOrElement) {
@@ -12636,10 +12636,10 @@
       };
       var internals$jscomp$inline_2347 = {
         bundleType: 0,
-        version: "19.2.4",
+        version: "19.2.5",
         rendererPackageName: "react-dom",
         currentDispatcherRef: ReactSharedInternals,
-        reconcilerVersion: "19.2.4"
+        reconcilerVersion: "19.2.5"
       };
       if ("undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__) {
         hook$jscomp$inline_2348 = __REACT_DEVTOOLS_GLOBAL_HOOK__;
@@ -12707,7 +12707,7 @@
         listenToAllSupportedEvents(container);
         return new ReactDOMHydrationRoot(initialChildren);
       };
-      exports.version = "19.2.4";
+      exports.version = "19.2.5";
     }
   });
 
@@ -13444,6 +13444,58 @@
       ] })
     ] });
   }
+  var COOLDOWN = [
+    {
+      name: "Standing Quad Stretch",
+      img: null,
+      desc: "Stand on one leg, pull the opposite foot toward your glute. Keep your knees together and stand tall. Hold 30 sec each side \xD7 2."
+    },
+    {
+      name: "Standing Hamstring Stretch (Toe Touch)",
+      img: null,
+      desc: "Stand with feet hip-width apart. Hinge at the hips and reach toward the floor. Keep a slight bend in the knees. Hold 30 sec \xD7 2."
+    },
+    {
+      name: "Hip Flexor Lunge Stretch",
+      img: null,
+      desc: "Step into a deep lunge. Drop the back knee to the floor and drive your hips forward gently. Keep your torso upright. Hold 30 sec each side \xD7 2."
+    },
+    {
+      name: "Seated Piriformis / Figure-4 Stretch",
+      img: null,
+      desc: "Sit on the floor, cross one ankle over the opposite knee. Gently press the crossed knee down and hinge forward slightly. Hold 30 sec each side \xD7 2."
+    },
+    {
+      name: "Seated Groin / Butterfly Stretch",
+      img: null,
+      desc: "Sit with the soles of your feet together. Hold your feet and gently press your knees toward the floor. Sit tall. Hold 30 sec \xD7 2."
+    },
+    {
+      name: "Lying Glute Stretch",
+      img: null,
+      desc: "Lie on your back. Cross one ankle over the opposite knee and pull both legs toward your chest. Hold 30 sec each side \xD7 2."
+    },
+    {
+      name: "Child's Pose",
+      img: null,
+      desc: "From hands and knees, sit back toward your heels and extend your arms forward on the floor. Breathe deeply and let your lower back relax. Hold 30 sec \xD7 2."
+    },
+    {
+      name: "Doorway / Chest Opener Stretch",
+      img: null,
+      desc: "Place both forearms on a wall or doorframe. Step through gently until you feel a stretch across your chest and shoulders. Hold 30 sec \xD7 2."
+    },
+    {
+      name: "Sleeper Stretch (Shoulder Internal Rotation)",
+      img: null,
+      desc: "Lie on your side on the stretched arm. Use the other hand to gently press the forearm toward the floor. Critical for shooting shoulder health. Hold 30 sec each side \xD7 2."
+    },
+    {
+      name: "Standing Calf Stretch",
+      img: null,
+      desc: "Place one foot behind the other. Press the back heel into the floor and lean forward slightly. Hold 30 sec each side \xD7 2."
+    }
+  ];
   function CooldownPanel() {
     const [open, setOpen] = (0, import_react.useState)(false);
     const [expanded, setExpanded] = (0, import_react.useState)(null);
@@ -15952,12 +16004,11 @@
     return "\u{1F331} Rookie";
   }
   function ChallengeEditor({ cfg, teamChallenge, setTeamChallenge, saveConfig, saveData: saveData2, loadData: loadData2 }) {
-    var _a, _b, _c, _d;
     const COLORS_PRIMARY = "#B8962E";
     const COLORS_MUTED = "#888888";
-    const [customLabel, setCustomLabel] = React.useState(((_a = cfg == null ? void 0 : cfg.customChallenge) == null ? void 0 : _a.label) || "");
-    const [customType, setCustomType] = React.useState(((_b = cfg == null ? void 0 : cfg.customChallenge) == null ? void 0 : _b.type) || "workouts");
-    const [customGoal, setCustomGoal] = React.useState(((_d = (_c = cfg == null ? void 0 : cfg.customChallenge) == null ? void 0 : _c.goal) == null ? void 0 : _d.toString()) || "");
+    const [customLabel, setCustomLabel] = React.useState(cfg?.customChallenge?.label || "");
+    const [customType, setCustomType] = React.useState(cfg?.customChallenge?.type || "workouts");
+    const [customGoal, setCustomGoal] = React.useState(cfg?.customChallenge?.goal?.toString() || "");
     const [saved, setSaved] = React.useState(false);
     const challengeTypes = [
       { value: "workouts", label: "\u{1F4AA} S&C Workouts" },
@@ -15979,7 +16030,7 @@
       const custom = { label: customLabel.trim(), type: customType, goal: parseInt(customGoal), setBy: "coach", setAt: Date.now(), weekKey };
       await saveConfig({ customChallenge: custom });
       await saveData2("wildcats:challenge:custom", custom, true);
-      setTeamChallenge((prev) => ({ ...prev, ...custom, current: (prev == null ? void 0 : prev.current) || 0, isCustom: true }));
+      setTeamChallenge((prev) => ({ ...prev, ...custom, current: prev?.current || 0, isCustom: true }));
       setSaved(true);
       setTimeout(() => setSaved(false), 2e3);
     };
@@ -16376,9 +16427,8 @@
                     }
                     setCoachData((prev) => prev.map((a) => a.email === u.email ? { ...a, completedWorkouts: newCW } : a));
                   }, style: { fontSize: 10, padding: "2px 8px", background: "#3498DB18", color: "#3498DB", border: "1px solid #3498DB40", borderRadius: 4, cursor: "pointer", fontWeight: 600 }, children: "Unlock" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
-                    var _a;
                     const newCW = { ...cw };
-                    const xpToRemove = ((_a = newCW[k]) == null ? void 0 : _a.noXP) ? 0 : 50;
+                    const xpToRemove = newCW[k]?.noXP ? 0 : 50;
                     delete newCW[k];
                     const users = await loadData2("wildcats:users", true) || {};
                     if (users[u.email]) {
@@ -16476,7 +16526,6 @@
     });
   }
   function App() {
-    var _a, _b, _c;
     const [user, setUser] = (0, import_react.useState)(null);
     const [tab, setTab] = (0, import_react.useState)("home");
     const [activeProg, setActiveProg] = (0, import_react.useState)(null);
@@ -16517,6 +16566,8 @@
     const [restIntervalId, setRestIntervalId] = (0, import_react.useState)(null);
     const [coachUnlocked, setCoachUnlocked] = (0, import_react.useState)(false);
     const [challengeStreak, setChallengeStreak] = (0, import_react.useState)(0);
+    const [weeklyLeader, setWeeklyLeader] = (0, import_react.useState)(null);
+    const [weeklyWins, setWeeklyWins] = (0, import_react.useState)({});
     const [announcements, setAnnouncements] = (0, import_react.useState)([]);
     const [editingAnn, setEditingAnn] = (0, import_react.useState)(null);
     const [unlockingAthlete, setUnlockingAthlete] = (0, import_react.useState)(null);
@@ -16536,11 +16587,11 @@
     const [programConfig, setProgramConfig] = (0, import_react.useState)({});
     const COACH_EMAIL = "leflerj25@gmail.com";
     const MAIN_COACH_EMAIL = "leflerj25@gmail.com";
-    const allCoachEmails = [COACH_EMAIL, ...(programConfig == null ? void 0 : programConfig.additionalCoaches) || []].map((e) => e.toLowerCase());
-    const isCoachAccount = allCoachEmails.includes(((_a = user == null ? void 0 : user.email) == null ? void 0 : _a.toLowerCase()) || "");
-    const isMainCoach = ((_b = user == null ? void 0 : user.email) == null ? void 0 : _b.toLowerCase()) === MAIN_COACH_EMAIL.toLowerCase();
-    const managerEmails = ((programConfig == null ? void 0 : programConfig.managerEmails) || []).map((e) => e.toLowerCase());
-    const isManagerAccount = !isCoachAccount && managerEmails.includes(((_c = user == null ? void 0 : user.email) == null ? void 0 : _c.toLowerCase()) || "");
+    const allCoachEmails = [COACH_EMAIL, ...programConfig?.additionalCoaches || []].map((e) => e.toLowerCase());
+    const isCoachAccount = allCoachEmails.includes(user?.email?.toLowerCase() || "");
+    const isMainCoach = user?.email?.toLowerCase() === MAIN_COACH_EMAIL.toLowerCase();
+    const managerEmails = (programConfig?.managerEmails || []).map((e) => e.toLowerCase());
+    const isManagerAccount = !isCoachAccount && managerEmails.includes(user?.email?.toLowerCase() || "");
     const [showWeeklySummary, setShowWeeklySummary] = (0, import_react.useState)(false);
     const [pullRefreshing, setPullRefreshing] = (0, import_react.useState)(false);
     const [pullDistance, setPullDistance] = (0, import_react.useState)(0);
@@ -16630,10 +16681,9 @@
       };
     }, []);
     (0, import_react.useEffect)(() => {
-      var _a2;
       if (showSplash) return;
       if (!user) return;
-      const email = ((_a2 = user.email) == null ? void 0 : _a2.toLowerCase()) || "";
+      const email = user.email?.toLowerCase() || "";
       const cfg = programConfig || {};
       const mgEmails = (cfg.managerEmails || []).map((e) => e.toLowerCase());
       const coachEmails = ["leflerj25@gmail.com", ...cfg.additionalCoaches || []].map((e) => e.toLowerCase());
@@ -16670,9 +16720,8 @@
         const cfgForBuddies = await loadData("wildcats:config", true) || {};
         const staffEmailsBuddies = [...["leflerj25@gmail.com", ...cfgForBuddies.additionalCoaches || []], ...cfgForBuddies.managerEmails || []].map((e) => e.toLowerCase());
         const buddies = Object.values(users).filter((u) => {
-          var _a2;
           if (u.email === user.email) return false;
-          if (staffEmailsBuddies.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "")) return false;
+          if (staffEmailsBuddies.includes(u.email?.toLowerCase() || "")) return false;
           const cw = u.completedWorkouts || {};
           return Object.values(cw).some((w) => w.completedAt && new Date(w.completedAt).toDateString() === today);
         }).map((u) => u.name);
@@ -16745,6 +16794,30 @@
           }
         }
         setTeamChallenge({ ...challenge, current: Math.min(current, challenge.goal), isCustom: !!customChallenge });
+        const now2 = /* @__PURE__ */ new Date();
+        const dow2 = now2.getDay();
+        const mondayStart = new Date(now2);
+        mondayStart.setHours(0, 0, 0, 0);
+        mondayStart.setDate(now2.getDate() - (dow2 === 0 ? 6 : dow2 - 1));
+        const mondayMs = mondayStart.getTime();
+        const weeklyXPs = Object.values(users).map((u) => {
+          const workoutXP = Object.values(u.completedWorkouts || {}).filter((w) => w.completedAt && w.completedAt >= mondayMs).reduce((s, w) => s + (w.xp || 0), 0);
+          const repeatXP = Object.values(u.repeatLog || {}).flatMap((arr) => arr).filter((ts) => ts >= mondayMs).reduce((s, _) => s + 25, 0);
+          return { email: u.email, name: u.name, weekXP: workoutXP + repeatXP };
+        }).sort((a, b) => b.weekXP - a.weekXP);
+        const top3 = weeklyXPs.slice(0, 3);
+        const myRank = weeklyXPs.findIndex((w) => w.email === user.email) + 1;
+        const myWeekXP = weeklyXPs.find((w) => w.email === user.email)?.weekXP || 0;
+        setWeeklyLeader({ top3, myRank, myWeekXP, total: weeklyXPs.length });
+        const currentWeekKey3 = mondayStart.toISOString().split("T")[0];
+        if (top3.length > 0 && top3[0].weekXP > 0) {
+          const wins = await loadData("wildcats:weeklywins", true) || {};
+          if (!wins[currentWeekKey3] || wins[currentWeekKey3].email !== top3[0].email) {
+            wins[currentWeekKey3] = { email: top3[0].email, name: top3[0].name, xp: top3[0].weekXP, week: currentWeekKey3 };
+            await saveData("wildcats:weeklywins", wins, true);
+          }
+          setWeeklyWins(wins);
+        }
       };
       loadSocialData();
     }, [user, completedWorkouts]);
@@ -16819,10 +16892,7 @@
       const lbCfg = await loadData("wildcats:config", true) || {};
       const lbMgEmails = (lbCfg.managerEmails || []).map((e) => e.toLowerCase());
       const lbCoachEmails = ["leflerj25@gmail.com", ...lbCfg.additionalCoaches || []].map((e) => e.toLowerCase());
-      const lb = Object.values(users).filter((u) => {
-        var _a2, _b2;
-        return !lbCoachEmails.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "") && !lbMgEmails.includes(((_b2 = u.email) == null ? void 0 : _b2.toLowerCase()) || "");
-      }).map((u) => {
+      const lb = Object.values(users).filter((u) => !lbCoachEmails.includes(u.email?.toLowerCase() || "") && !lbMgEmails.includes(u.email?.toLowerCase() || "")).map((u) => {
         const cw = u.completedWorkouts || {};
         const scXP = Object.keys(cw).filter((k) => k.startsWith("sc__")).length * 50;
         const dribbleXP = Object.keys(cw).filter((k) => k.startsWith("dribble__")).length * 50;
@@ -16839,7 +16909,6 @@
       setLeaderboard(lb);
     };
     const handleAuth = (0, import_react.useCallback)(async (u) => {
-      var _a2;
       setUser(u);
       const cw = u.completedWorkouts || {};
       setCompletedWorkouts(cw);
@@ -16874,7 +16943,7 @@
       if (sched) setSchedule(sched);
       const cfg = await loadData("wildcats:config", true) || {};
       setProgramConfig(cfg);
-      window.__wildcatsUserEmail = ((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "";
+      window.__wildcatsUserEmail = u.email?.toLowerCase() || "";
       window.__wildcatsConfig = cfg;
       const notes = await loadData("wildcats:coachnotes", true) || {};
       setCoachNotes(notes);
@@ -16900,25 +16969,22 @@
       setTab("home");
     };
     function earnedXPTodayFor(key) {
-      var _a2;
-      const entries = (_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[key];
+      const entries = user?.repeatLog?.[key];
       if (!entries || !entries.length) return false;
       const todayStart = /* @__PURE__ */ new Date();
       todayStart.setHours(0, 0, 0, 0);
       return entries.some((ts) => ts >= todayStart.getTime());
     }
     function countXPTodayForPrefix(prefix) {
-      var _a2;
-      const entries = ((_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[prefix]) || [];
+      const entries = user?.repeatLog?.[prefix] || [];
       const todayStart = /* @__PURE__ */ new Date();
       todayStart.setHours(0, 0, 0, 0);
       return entries.filter((ts) => ts >= todayStart.getTime()).length;
     }
     async function awardRepeatXP(key, xpGain) {
-      var _a2;
       const now = Date.now();
-      const existing = ((_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[key]) || [];
-      const newRepeatLog = { ...(user == null ? void 0 : user.repeatLog) || {}, [key]: [...existing, now] };
+      const existing = user?.repeatLog?.[key] || [];
+      const newRepeatLog = { ...user?.repeatLog || {}, [key]: [...existing, now] };
       const newXP = (user.xp || 0) + xpGain;
       const updatedUser = { ...user, xp: newXP, repeatLog: newRepeatLog };
       setUser(updatedUser);
@@ -16947,7 +17013,6 @@
       return countToday + 1;
     }
     const completeWorkout = async (progId, phaseId, dayId) => {
-      var _a2, _b2;
       const key = `${progId}__${phaseId}__${dayId}`;
       if (!isProgramLive() && !isCoachAccount) return;
       const isRepeatable = progId === "dribble" || progId === "shooting" || progId === "dribble_c2" || progId === "shooting_c2";
@@ -16965,8 +17030,8 @@
           return;
         }
         const now = Date.now();
-        const existing = ((_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[key]) || [];
-        const newRepeatLog = { ...(user == null ? void 0 : user.repeatLog) || {}, [key]: [...existing, now] };
+        const existing = user?.repeatLog?.[key] || [];
+        const newRepeatLog = { ...user?.repeatLog || {}, [key]: [...existing, now] };
         const newXP2 = (user.xp || 0) + 25;
         const newCompleted2 = { ...completedWorkouts, [key]: { completedAt: now, xp: 25 } };
         const newStreak2 = calcStreak(newCompleted2);
@@ -17004,7 +17069,7 @@
       await saveData("wildcats:session", { email: user.email });
       await saveData(`wildcats:lb:${user.email}`, { email: user.email, name: user.name, xp: newXP }, true);
       if (activePhase && activeProg) {
-        const phaseItems = [...activePhase.days, ...((_b2 = activePhase.fieldWork) == null ? void 0 : _b2.map((fw, i) => ({ id: `field_${i}` }))) || []];
+        const phaseItems = [...activePhase.days, ...activePhase.fieldWork?.map((fw, i) => ({ id: `field_${i}` })) || []];
         const phaseDone = phaseItems.filter((d) => !!newCompleted[`${activeProg.id}__${activePhase.id}__${d.id}`]).length;
         if (phaseDone === phaseItems.length) {
           setPhaseCompletion({
@@ -17019,10 +17084,7 @@
         }
       }
     };
-    const totalWorkouts = ALL_PROGRAMS.reduce((sum, p) => sum + p.phases.reduce((s, ph) => {
-      var _a2;
-      return s + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-    }, 0), 0);
+    const totalWorkouts = ALL_PROGRAMS.reduce((sum, p) => sum + p.phases.reduce((s, ph) => s + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
     const completedCount = Object.keys(completedWorkouts).length;
     if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: COLORS.textMuted, fontSize: 14 }, children: "Loading..." }) });
     if (!user && !isProgramLive()) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CountdownScreen, { onAuth: handleAuth });
@@ -17036,11 +17098,10 @@
       if (!isBWKey && val && (!prev || parseFloat(val) > parseFloat(prev))) {
         const parts = key.split("__");
         const exName = (() => {
-          var _a2, _b2, _c2, _d;
           try {
             const gi = parseInt(parts[parts.length - 3].replace("g", ""));
             const ei = parseInt(parts[parts.length - 2]);
-            return ((_d = (_c2 = (_b2 = (_a2 = activeDay == null ? void 0 : activeDay.groups) == null ? void 0 : _a2[gi]) == null ? void 0 : _b2.exercises) == null ? void 0 : _c2[ei]) == null ? void 0 : _d.name) || null;
+            return activeDay?.groups?.[gi]?.exercises?.[ei]?.name || null;
           } catch {
             return null;
           }
@@ -17472,7 +17533,6 @@
               borderRadius: "var(--border-radius-md)",
               overflow: "hidden"
             }, children: group.exercises.map((ex, ei) => {
-              var _a2, _b2, _c2, _d, _e, _f;
               const exKey = `${wKey}__g${gi}__${ei}`;
               const isLast = ei === group.exercises.length - 1;
               return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
@@ -17520,11 +17580,11 @@
                     ex.label
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 2px", fontWeight: 500, fontSize: 14 }, children: ((_a2 = exerciseOverrides[exKey]) == null ? void 0 : _a2.name) || ex.name }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 2px", fontWeight: 500, fontSize: 14 }, children: exerciseOverrides[exKey]?.name || ex.name }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: [
-                      ((_b2 = exerciseOverrides[exKey]) == null ? void 0 : _b2.sets) || ex.sets,
+                      exerciseOverrides[exKey]?.sets || ex.sets,
                       " sets \xB7 ",
-                      ((_c2 = exerciseOverrides[exKey]) == null ? void 0 : _c2.reps) || ex.reps
+                      exerciseOverrides[exKey]?.reps || ex.reps
                     ] })
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }, children: [
@@ -17542,7 +17602,7 @@
                     getYouTubeLink(ex.name) && isScProgram && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                       "a",
                       {
-                        href: customVideos[((_d = exerciseOverrides[exKey]) == null ? void 0 : _d.name) || ex.name] || customVideos[ex.name] || getYouTubeLink(ex.name),
+                        href: customVideos[exerciseOverrides[exKey]?.name || ex.name] || customVideos[ex.name] || getYouTubeLink(ex.name),
                         target: "_blank",
                         rel: "noopener noreferrer",
                         title: "Watch on YouTube",
@@ -17591,9 +17651,9 @@
                       fontWeight: 500,
                       whiteSpace: "nowrap"
                     }, children: [
-                      ((_e = exerciseOverrides[exKey]) == null ? void 0 : _e.sets) || ex.sets,
+                      exerciseOverrides[exKey]?.sets || ex.sets,
                       "\xD7",
-                      ((_f = exerciseOverrides[exKey]) == null ? void 0 : _f.reps) || ex.reps
+                      exerciseOverrides[exKey]?.reps || ex.reps
                     ] })
                   ] })
                 ] }),
@@ -17783,7 +17843,7 @@
       return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16, paddingBottom: 100 }, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => setActiveFieldWork(null), style: { marginBottom: 14, fontSize: 13, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 }, children: [
           "\u2190 Back to ",
-          activePhase == null ? void 0 : activePhase.name
+          activePhase?.name
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: `${typeColor}12`, border: `1.5px solid ${typeColor}40`, borderRadius: 16, padding: "16px", marginBottom: 16 }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, fontWeight: 700, color: typeColor, textTransform: "uppercase", letterSpacing: 1 }, children: typeLabel }),
@@ -17801,7 +17861,7 @@
             const cleanName = stripSectionPrefix(ex.name);
             const videoUrl = getSpeedVideo(ex.name) || getSpeedVideo(cleanName);
             const isLast = ei === section.exercises.length - 1;
-            const checkKey = `fw__${activeProg == null ? void 0 : activeProg.id}__${activePhase == null ? void 0 : activePhase.id}__${fwId}__${ex._ei}`;
+            const checkKey = `fw__${activeProg?.id}__${activePhase?.id}__${fwId}__${ex._ei}`;
             const checked = !!exChecks[checkKey];
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "11px 14px", borderBottom: isLast ? "none" : `0.5px solid ${COLORS.border}`, display: "flex", alignItems: "flex-start", gap: 10, background: checked ? `${typeColor}06` : "transparent" }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => toggleExCheck(checkKey), style: {
@@ -17851,10 +17911,9 @@
       ] });
     };
     const renderPhaseView = () => {
-      var _a2;
       const isRunning = activeProg.id === "running";
       const isScPhase = activeProg.id === "sc" || activeProg.id === "sc_c2";
-      const hasFieldWork = !isRunning && ((_a2 = activePhase.fieldWork) == null ? void 0 : _a2.length) > 0;
+      const hasFieldWork = !isRunning && activePhase.fieldWork?.length > 0;
       const numWeeks = 4;
       const daysPerWeek = activePhase.days.length / numWeeks;
       const fwPerWeek = hasFieldWork ? activePhase.fieldWork.filter((fw) => fw.type !== "none" && !(fw.type === "linear" && activePhase.id === "may")).length : 0;
@@ -17969,7 +18028,6 @@
               isWeekGymDone(weekNum) && fwPerWeek > 0 && activePhase.fieldWork.filter((fw) => fw.type !== "none" && !(fw.type === "linear" && activePhase.id === "may")).every((fw) => isFieldWorkDone(weekNum, fw.type)) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 10, color: "#4CAF82", fontWeight: 600 }, children: "\u2713 Week complete" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginBottom: hasFieldWork ? 8 : 24 }, children: weekDays.map((day, di) => {
-              var _a3;
               const dayIndex = activePhase.days.indexOf(day);
               const wKey = `${activeProg.id}__${activePhase.id}__${day.id}`;
               const done = !!completedWorkouts[wKey];
@@ -17987,7 +18045,7 @@
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 600, fontSize: 14, color: unlocked ? "#fff" : COLORS.textMuted }, children: day.name })
                       ] }),
                       day.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 0", fontSize: 11, color: "#FF6B35", fontStyle: "italic" }, children: day.note }),
-                      !done && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 0", fontSize: 12, color: COLORS.textMuted }, children: day.groups ? `${day.groups.reduce((s, g) => s + g.exercises.length, 0)} exercises \xB7 ${day.groups.length} groups` : `${((_a3 = day.exercises) == null ? void 0 : _a3.length) || 0} exercises` })
+                      !done && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "2px 0 0", fontSize: 12, color: COLORS.textMuted }, children: day.groups ? `${day.groups.reduce((s, g) => s + g.exercises.length, 0)} exercises \xB7 ${day.groups.length} groups` : `${day.exercises?.length || 0} exercises` })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
                       done && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 16, color: activePhase.color }, children: "\u2713" }),
@@ -18055,11 +18113,10 @@
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 12 }, children: activeProg.phases.map((phase, phaseIndex) => {
-          var _a2, _b2, _c2, _d;
-          const total = phase.days.length + (((_a2 = phase.fieldWork) == null ? void 0 : _a2.length) || 0);
-          const done = [...phase.days, ...((_b2 = phase.fieldWork) == null ? void 0 : _b2.map((_, i) => ({ id: `field_${i}` }))) || []].filter((d) => !!completedWorkouts[`${activeProg.id}__${phase.id}__${d.id}`]).length;
+          const total = phase.days.length + (phase.fieldWork?.length || 0);
+          const done = [...phase.days, ...phase.fieldWork?.map((_, i) => ({ id: `field_${i}` })) || []].filter((d) => !!completedWorkouts[`${activeProg.id}__${phase.id}__${d.id}`]).length;
           const pct = Math.round(done / total * 100);
-          const unlocked = isPhaseUnlocked(activeProg, phaseIndex, completedWorkouts, isCoachAccount) && !(((_c2 = phaseOverrides[`${activeProg.id}__${phase.id}`]) == null ? void 0 : _c2.locked) && !isCoachAccount) && !(((_d = phaseOverrides[`${activeProg.id}__${phase.id}`]) == null ? void 0 : _d.unlockDate) && /* @__PURE__ */ new Date() < new Date(phaseOverrides[`${activeProg.id}__${phase.id}`].unlockDate) && !isCoachAccount);
+          const unlocked = isPhaseUnlocked(activeProg, phaseIndex, completedWorkouts, isCoachAccount) && !(phaseOverrides[`${activeProg.id}__${phase.id}`]?.locked && !isCoachAccount) && !(phaseOverrides[`${activeProg.id}__${phase.id}`]?.unlockDate && /* @__PURE__ */ new Date() < new Date(phaseOverrides[`${activeProg.id}__${phase.id}`].unlockDate) && !isCoachAccount);
           return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
             "button",
             {
@@ -18208,37 +18265,39 @@
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff" }, children: workoutBuddies.length === 1 ? `${workoutBuddies[0]} already put in work today!` : workoutBuddies.length === 2 ? `${workoutBuddies[0]} and ${workoutBuddies[1]} are putting in work!` : `${workoutBuddies[0]}, ${workoutBuddies[1]} +${workoutBuddies.length - 2} others are grinding today!` })
           ] })
         ] }),
-        teamChallenge && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 14, overflow: "hidden", marginBottom: 14 }, children: [
-          challengeStreak > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "linear-gradient(90deg, #FF6B35, #FFD700)", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 13, fontWeight: 800, color: "#000" }, children: [
-              "\u{1F525} ",
-              challengeStreak,
-              "-WEEK TEAM STREAK"
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, fontWeight: 700, color: "#000", opacity: 0.7 }, children: "Keep it going!" })
+        weeklyLeader && weeklyLeader.top3.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 14, overflow: "hidden", marginBottom: 14 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "linear-gradient(90deg, #B8962E, #FFD700)", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 13, fontWeight: 800, color: "#000" }, children: "\u{1F3C6} THIS WEEK'S LEADERBOARD" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, fontWeight: 700, color: "#000", opacity: 0.75 }, children: "Resets Monday" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "14px 16px" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 11, color: "#3498DB", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: [
-                { workouts: "\u{1F4AA}", xp: "\u2B50", fieldwork: "\u26A1", dribble: "\u{1F3C0}", shooting: "\u{1F3AF}", running: "\u{1F3C3}" }[teamChallenge.type] || "\u{1F3C6}",
-                " ",
-                "Weekly Team Challenge"
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "12px 16px" }, children: [
+            weeklyLeader.top3.map((athlete, i) => {
+              const medals = ["\u{1F947}", "\u{1F948}", "\u{1F949}"];
+              const isMe = athlete.email === user.email;
+              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < weeklyLeader.top3.length - 1 ? `0.5px solid ${COLORS.border}` : "none" }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 20, flexShrink: 0 }, children: medals[i] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { flex: 1, fontSize: 14, fontWeight: isMe ? 700 : 500, color: isMe ? COLORS.primary : "#fff" }, children: [
+                  athlete.name,
+                  isMe ? " (you)" : ""
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 14, fontWeight: 700, color: isMe ? COLORS.primary : "#fff" }, children: [
+                  athlete.weekXP,
+                  " XP"
+                ] })
+              ] }, athlete.email);
+            }),
+            weeklyLeader.myRank > 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", marginTop: 4, borderTop: `0.5px solid ${COLORS.border}` }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 14, color: COLORS.textMuted, flexShrink: 0, width: 28, textAlign: "center" }, children: [
+                "#",
+                weeklyLeader.myRank
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: COLORS.textMuted, fontWeight: 600 }, children: [
-                teamChallenge.current,
-                "/",
-                teamChallenge.goal
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { flex: 1, fontSize: 14, fontWeight: 700, color: COLORS.primary }, children: "You" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 14, fontWeight: 700, color: COLORS.primary }, children: [
+                weeklyLeader.myWeekXP,
+                " XP"
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 8px", fontSize: 14, color: "#fff", fontWeight: 700 }, children: [
-              "Team goal: ",
-              teamChallenge.label
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 8, background: "#2A2A2A", borderRadius: 4, overflow: "hidden" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${Math.round(teamChallenge.current / teamChallenge.goal * 100)}%`, height: "100%", background: teamChallenge.current >= teamChallenge.goal ? "linear-gradient(90deg, #4CAF82, #B8962E)" : "linear-gradient(90deg, #3498DB, #B8962E)", borderRadius: 4, transition: "width 0.5s" } }) }),
-            teamChallenge.current >= teamChallenge.goal ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "6px 0 0", fontSize: 12, color: "#4CAF82", fontWeight: 700 }, children: "\u2705 Challenge complete this week!" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "6px 0 0", fontSize: 11, color: COLORS.textMuted }, children: [
-              Math.round(teamChallenge.current / teamChallenge.goal * 100),
-              "% complete \u2014 every workout counts!"
-            ] })
+            weeklyLeader.myRank === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "8px 0 0", fontSize: 11, color: COLORS.textMuted }, children: "Complete a workout to get on the board this week!" })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: streak > 0 ? "1fr 1fr" : "1fr", gap: 10, marginBottom: 14 }, children: [
@@ -18306,10 +18365,7 @@
             ...isCoachAccount || isC2Unlocked(SHOOTING_PROGRAM, completedWorkouts, programConfig) ? [SHOOTING_PROGRAM_C2] : [],
             ...isCoachAccount || isC2Unlocked(RUNNING_PROGRAM, completedWorkouts, programConfig) ? [RUNNING_PROGRAM_C2] : []
           ].map((prog) => {
-            const total = prog.phases.reduce((s, ph) => {
-              var _a2;
-              return s + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-            }, 0);
+            const total = prog.phases.reduce((s, ph) => s + ph.days.length + (ph.fieldWork?.length || 0), 0);
             const done = Object.keys(completedWorkouts).filter((k) => k.startsWith(prog.id)).length;
             const pct = Math.round(done / total * 100);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
@@ -18399,10 +18455,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 20 }, children: "Programs" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
           visibleProgs.map((prog) => {
-            const total = prog.phases.reduce((s, ph) => {
-              var _a2;
-              return s + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-            }, 0);
+            const total = prog.phases.reduce((s, ph) => s + ph.days.length + (ph.fieldWork?.length || 0), 0);
             const done = Object.keys(completedWorkouts).filter((k) => k.startsWith(prog.id)).length;
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: COLORS.surface, border: `0.5px solid ${COLORS.border}`, borderRadius: 14, overflow: "hidden" }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "16px 18px 12px", display: "flex", alignItems: "center", gap: 14 }, children: [
@@ -18423,9 +18476,8 @@
                 ] })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { borderTop: `0.5px solid ${COLORS.border}`, display: "flex" }, children: prog.phases.map((phase, pi) => {
-                var _a2, _b2;
-                const phTotal = phase.days.length + (((_a2 = phase.fieldWork) == null ? void 0 : _a2.length) || 0);
-                const phDone = [...phase.days, ...((_b2 = phase.fieldWork) == null ? void 0 : _b2.map((_, i) => ({ id: `field_${i}` }))) || []].filter((d) => !!completedWorkouts[`${prog.id}__${phase.id}__${d.id}`]).length;
+                const phTotal = phase.days.length + (phase.fieldWork?.length || 0);
+                const phDone = [...phase.days, ...phase.fieldWork?.map((_, i) => ({ id: `field_${i}` })) || []].filter((d) => !!completedWorkouts[`${prog.id}__${phase.id}__${d.id}`]).length;
                 const phUnlocked = isPhaseUnlocked(prog, pi, completedWorkouts, isCoachAccount);
                 return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                   "button",
@@ -18463,10 +18515,7 @@
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { margin: "0 0 3px", fontSize: 16, fontWeight: 600, color: "#fff" }, children: "Fundamental Skills" }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 6px", fontSize: 13, color: COLORS.textMuted }, children: "8 pillars \xB7 +25 XP per session \xB7 repeatable daily" }),
                   (() => {
-                    const totalReps = FUNDAMENTALS.reduce((sum, p) => sum + p.subSkills.reduce((s2, ss) => {
-                      var _a2, _b2;
-                      return s2 + (((_b2 = (_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[`fund__${p.id}__${ss.id}`]) == null ? void 0 : _b2.length) || 0);
-                    }, 0), 0);
+                    const totalReps = FUNDAMENTALS.reduce((sum, p) => sum + p.subSkills.reduce((s2, ss) => s2 + (user?.repeatLog?.[`fund__${p.id}__${ss.id}`]?.length || 0), 0), 0);
                     const doneTodayAll = FUNDAMENTALS.reduce((sum, p) => sum + p.subSkills.filter((ss) => earnedXPTodayFor(`fund__${p.id}__${ss.id}`)).length, 0);
                     const totalSubs = FUNDAMENTALS.reduce((sum, p) => sum + p.subSkills.length, 0);
                     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
@@ -18515,14 +18564,24 @@
       const runUnlocked = isCoachAccount || isRunningUnlocked(completedWorkouts);
       const boards = [
         { id: "overall", label: "Overall", icon: "\u{1F3C6}", key: "overall" },
-        { id: "sc", label: "Strength & Conditioning", icon: "\u{1F4AA}", key: "sc" },
+        { id: "sc", label: "S&C", icon: "\u{1F4AA}", key: "sc" },
         { id: "dribble", label: "Dribbling", icon: "\u{1F3C0}", key: "dribble" },
         { id: "shooting", label: "Shooting", icon: "\u{1F3AF}", key: "shooting" },
-        ...runUnlocked ? [{ id: "running_dist", label: "Running \u2014 Distance", icon: "\u{1F3C3}", key: "runDist" }, { id: "running_time", label: "Running \u2014 5km Time", icon: "\u23F1", key: "runTime" }] : []
+        { id: "weekly_wins", label: "Weekly Wins", icon: "\u{1F3C6}", key: "weeklyWins" },
+        ...runUnlocked ? [{ id: "running_dist", label: "Distance", icon: "\u{1F3C3}", key: "runDist" }, { id: "running_time", label: "5km Time", icon: "\u23F1", key: "runTime" }] : []
       ];
       const activeBoard = boards.find((b) => b.id === lbTab) || boards[0];
       const isRunBoard = lbTab === "running_dist" || lbTab === "running_time";
+      const isWinsBoard = lbTab === "weekly_wins";
       const sorted = isRunBoard ? (lbTab === "running_time" ? [...runLbData].filter((r) => r.totalSecs).sort((a, b) => a.totalSecs - b.totalSecs) : [...runLbData].sort((a, b) => b.dist - a.dist)).slice(0, 20) : [...leaderboard].sort((a, b) => b[activeBoard.key] - a[activeBoard.key]).slice(0, 20);
+      const winsCount = {};
+      Object.values(weeklyWins).forEach((w) => {
+        if (!winsCount[w.email]) winsCount[w.email] = { name: w.name, email: w.email, wins: 0, weeks: [] };
+        winsCount[w.email].wins++;
+        winsCount[w.email].weeks.push(w.week);
+      });
+      const winsSorted = Object.values(winsCount).sort((a, b) => b.wins - a.wins);
+      const pastWinsList = Object.values(weeklyWins).sort((a, b) => b.week.localeCompare(a.week));
       const formatTime = (secs) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
       return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 14 }, children: "Leaderboard" }),
@@ -18544,54 +18603,104 @@
           " ",
           b.label
         ] }, b.id)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }, children: [
-          activeBoard.icon,
-          " ",
-          activeBoard.label,
-          " \u2014 ranked by XP earned"
-        ] }),
-        sorted.length === 0 || !isRunBoard && sorted.every((a) => !a[activeBoard.key]) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: COLORS.textMuted, fontSize: 14 }, children: "No activity yet on this board." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: sorted.map((athlete, i) => {
-          const isMe = athlete.email === user.email;
-          const medal = i === 0 ? "\u{1F947}" : i === 1 ? "\u{1F948}" : i === 2 ? "\u{1F949}" : null;
-          const statVal = isRunBoard ? lbTab === "running_time" ? formatTime(athlete.totalSecs) : `${athlete.dist}km` : athlete[activeBoard.key];
-          const statLabel = isRunBoard ? lbTab === "running_time" ? "5km time" : "distance" : "XP";
-          const canViewProfile = isCoachAccount || isManagerAccount;
-          const athleteData = canViewProfile ? coachData.find((a) => a.email === athlete.email) : null;
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "div",
-            {
-              onClick: () => athleteData && setViewingAthlete(athleteData),
-              style: {
-                background: isMe ? COLORS.primaryLight : COLORS.surface,
-                border: isMe ? `1.5px solid ${COLORS.primary}` : `0.5px solid ${COLORS.border}`,
-                borderRadius: 12,
-                padding: "12px 16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                cursor: athleteData ? "pointer" : "default"
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 18, width: 28, textAlign: "center", color: COLORS.textMuted, fontWeight: 500 }, children: medal || `#${i + 1}` }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: athlete.name, size: 36, bg: isMe ? COLORS.primary : "#1A1A1A" }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 2px", fontWeight: isMe ? 600 : 400, fontSize: 14, color: "#fff" }, children: [
-                    athlete.name,
-                    " ",
-                    isMe && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.primary }, children: "(you)" })
-                  ] }),
-                  !isRunBoard && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: xpLabel(athlete.overall) }),
-                  isRunBoard && athlete.date && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: new Date(athlete.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) })
+        isWinsBoard ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }, children: "\u{1F3C6} Weekly Wins \u2014 most weeks won this summer" }),
+          winsSorted.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: COLORS.textMuted, fontSize: 14 }, children: "No weekly winners recorded yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }, children: winsSorted.map((athlete, i) => {
+            const isMe = athlete.email === user.email;
+            const medal = i === 0 ? "\u{1F947}" : i === 1 ? "\u{1F948}" : i === 2 ? "\u{1F949}" : null;
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: {
+              background: isMe ? COLORS.primaryLight : COLORS.surface,
+              border: isMe ? `1.5px solid ${COLORS.primary}` : `0.5px solid ${COLORS.border}`,
+              borderRadius: 12,
+              padding: "12px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 22, width: 32, textAlign: "center", flexShrink: 0 }, children: medal || `#${i + 1}` }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 2px", fontWeight: 700, fontSize: 15, color: isMe ? COLORS.primary : "#fff" }, children: [
+                  athlete.name,
+                  isMe ? " (you)" : ""
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "right" }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 16, color: isMe ? COLORS.primary : COLORS.text }, children: statVal }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: statLabel })
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: [
+                  athlete.wins,
+                  " week",
+                  athlete.wins !== 1 ? "s" : "",
+                  " won"
                 ] })
-              ]
-            },
-            athlete.email
-          );
-        }) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: 4, flexWrap: "wrap", justifyContent: "flex-end", maxWidth: 100 }, children: Array.from({ length: athlete.wins }).map((_, j) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 14 }, children: "\u{1F3C6}" }, j)) })
+            ] }, athlete.email);
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: 12, color: COLORS.textMuted, marginBottom: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: "Week-by-Week History" }),
+          pastWinsList.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: COLORS.textMuted, fontSize: 13 }, children: "No history yet." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: pastWinsList.map((w) => {
+            const weekDate = /* @__PURE__ */ new Date(w.week + "T12:00:00");
+            const label = weekDate.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+            const isMe = w.email === user.email;
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, background: COLORS.surface, borderRadius: 10, padding: "10px 14px", border: `0.5px solid ${COLORS.border}` }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: COLORS.textMuted, width: 50, flexShrink: 0 }, children: [
+                "Wk ",
+                label
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 14 }, children: "\u{1F3C6}" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { flex: 1, fontSize: 14, fontWeight: isMe ? 700 : 500, color: isMe ? COLORS.primary : "#fff" }, children: w.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 12, color: COLORS.textMuted }, children: [
+                w.xp,
+                " XP"
+              ] })
+            ] }, w.week);
+          }) })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { fontSize: 12, color: COLORS.textMuted, marginBottom: 14 }, children: [
+            activeBoard.icon,
+            " ",
+            activeBoard.label,
+            " \u2014 ranked by XP earned"
+          ] }),
+          sorted.length === 0 || !isRunBoard && sorted.every((a) => !a[activeBoard.key]) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: COLORS.textMuted, fontSize: 14 }, children: "No activity yet on this board." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: sorted.map((athlete, i) => {
+            const isMe = athlete.email === user.email;
+            const medal = i === 0 ? "\u{1F947}" : i === 1 ? "\u{1F948}" : i === 2 ? "\u{1F949}" : null;
+            const statVal = isRunBoard ? lbTab === "running_time" ? formatTime(athlete.totalSecs) : `${athlete.dist}km` : athlete[activeBoard.key];
+            const statLabel = isRunBoard ? lbTab === "running_time" ? "5km time" : "distance" : "XP";
+            const canViewProfile = isCoachAccount || isManagerAccount;
+            const athleteData = canViewProfile ? coachData.find((a) => a.email === athlete.email) : null;
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              "div",
+              {
+                onClick: () => athleteData && setViewingAthlete(athleteData),
+                style: {
+                  background: isMe ? COLORS.primaryLight : COLORS.surface,
+                  border: isMe ? `1.5px solid ${COLORS.primary}` : `0.5px solid ${COLORS.border}`,
+                  borderRadius: 12,
+                  padding: "12px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  cursor: athleteData ? "pointer" : "default"
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 18, width: 28, textAlign: "center", color: COLORS.textMuted, fontWeight: 500 }, children: medal || `#${i + 1}` }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: athlete.name, size: 36, bg: isMe ? COLORS.primary : "#1A1A1A" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: "0 0 2px", fontWeight: isMe ? 600 : 400, fontSize: 14, color: "#fff" }, children: [
+                      athlete.name,
+                      " ",
+                      isMe && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: COLORS.primary }, children: "(you)" })
+                    ] }),
+                    !isRunBoard && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: xpLabel(athlete.overall) }),
+                    isRunBoard && athlete.date && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: new Date(athlete.date).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "right" }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 16, color: isMe ? COLORS.primary : COLORS.text }, children: statVal }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: statLabel })
+                  ] })
+                ]
+              },
+              athlete.email
+            );
+          }) })
+        ] })
       ] });
     };
     const renderProfile = () => {
@@ -18604,10 +18713,7 @@
         ...isC2Unlocked(RUNNING_PROGRAM, completedWorkouts, programConfig) ? [RUNNING_PROGRAM_C2] : []
       ];
       const progStats = allProgsForStats.map((prog) => {
-        const total = prog.phases.reduce((s, ph) => {
-          var _a2;
-          return s + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-        }, 0);
+        const total = prog.phases.reduce((s, ph) => s + ph.days.length + (ph.fieldWork?.length || 0), 0);
         const done = Object.keys(completedWorkouts).filter((k) => k.startsWith(prog.id)).length;
         return { ...prog, done, total };
       });
@@ -18917,10 +19023,9 @@
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { height: 4, background: "#2A2A2A", borderRadius: 2, overflow: "hidden", marginBottom: 10 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: `${gymTotal > 0 ? Math.round(gymDone / gymTotal * 100) : 0}%`, height: "100%", background: phase.color, borderRadius: 2 } }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexWrap: "wrap", gap: 6 }, children: [
                   phaseDays.map((day) => {
-                    var _a2;
                     const k = `${phaseKey}__${day.id}`;
                     const done = !!cw[k];
-                    const completedAt = (_a2 = cw[k]) == null ? void 0 : _a2.completedAt;
+                    const completedAt = cw[k]?.completedAt;
                     const dateStr = completedAt ? new Date(completedAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) : null;
                     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                       "div",
@@ -18941,10 +19046,9 @@
                   }),
                   fieldWork.map((fw, fi) => {
                     const weekEntries = [1, 2, 3, 4].map((w) => {
-                      var _a2;
                       const k = `${phaseKey}__field_${fw.type}_w${w}`;
                       const done = !!cw[k];
-                      const completedAt = (_a2 = cw[k]) == null ? void 0 : _a2.completedAt;
+                      const completedAt = cw[k]?.completedAt;
                       const dateStr = completedAt ? new Date(completedAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) : null;
                       return { w, done, dateStr };
                     });
@@ -18986,10 +19090,7 @@
         { id: "runs", icon: "\u{1F4F8}", label: "Run Photos", desc: "Verify athlete proof uploads" },
         { id: "weights", icon: "\u{1F3CB}\uFE0F", label: "Weight Logs", desc: "Athlete personal bests" }
       ];
-      const totalW = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => {
-        var _a2;
-        return s2 + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-      }, 0), 0);
+      const totalW = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => s2 + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
       const Header = ({ title }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1A1A1A", padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, borderBottom: `1px solid #4CAF8230` }, children: [
         mgPage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setMgPage(null), style: { background: "none", border: "none", color: COLORS.textMuted, fontSize: 22, cursor: "pointer", padding: 0, lineHeight: 1 }, children: "\u2190" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
@@ -19107,16 +19208,12 @@
             const now = Date.now();
             const staffEmails4 = [...allCoachEmails, ...managerEmails];
             const inactive = managerData.filter((u) => {
-              var _a2;
-              if (staffEmails4.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "")) return false;
+              if (staffEmails4.includes(u.email?.toLowerCase() || "")) return false;
               const last = Math.max(u.lastLogin || 0, ...Object.values(u.completedWorkouts || {}).map((w) => w.completedAt || 0));
               return now - last >= 7 * 864e5;
             });
             const staffEmails2 = [...allCoachEmails, ...managerEmails];
-            const topAthletes = [...managerData].filter((u) => {
-              var _a2;
-              return !staffEmails2.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "");
-            }).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 5);
+            const topAthletes = [...managerData].filter((u) => !staffEmails2.includes(u.email?.toLowerCase() || "")).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 5);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
               weeks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 14, padding: "14px 16px" }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 12px", fontSize: 11, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.8 }, children: "Team Workouts Per Week" }),
@@ -19377,14 +19474,13 @@
       setCoachData((prev) => prev.map((a) => a.email === athlete.email ? { ...a, completedWorkouts: newCW, xp: newXP } : a));
     };
     const renderFundamentals = () => {
-      var _a2;
       if (!showFundamentals) return null;
       if (activeSubSkill && activePillar) {
         const pillar = FUNDAMENTALS.find((p) => p.id === activePillar);
-        const sub = pillar == null ? void 0 : pillar.subSkills.find((s) => s.id === activeSubSkill);
+        const sub = pillar?.subSkills.find((s) => s.id === activeSubSkill);
         if (!pillar || !sub) return null;
         const key = `fund__${pillar.id}__${sub.id}`;
-        const completions = ((_a2 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a2[key]) || [];
+        const completions = user?.repeatLog?.[key] || [];
         const earnedToday = earnedXPTodayFor(key);
         const totalCompletions = completions.length;
         return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "fixed", inset: 0, background: "#141414", zIndex: 997, overflowY: "auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 640, margin: "0 auto", padding: 16 }, children: [
@@ -19480,9 +19576,8 @@
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 10px", fontSize: 12, color: COLORS.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: "Sub-Skills" }),
           pillar.subSkills.map((sub) => {
-            var _a3, _b2;
             const key = `fund__${pillar.id}__${sub.id}`;
-            const completions = ((_b2 = (_a3 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a3[key]) == null ? void 0 : _b2.length) || 0;
+            const completions = user?.repeatLog?.[key]?.length || 0;
             const earnedToday = earnedXPTodayFor(key);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
               "div",
@@ -19542,10 +19637,7 @@
         FUNDAMENTALS.map((pillar) => {
           const totalSubs = pillar.subSkills.length;
           const doneTodayCount = pillar.subSkills.filter((s) => earnedXPTodayFor(`fund__${pillar.id}__${s.id}`)).length;
-          const totalReps = pillar.subSkills.reduce((sum, s) => {
-            var _a3, _b2;
-            return sum + (((_b2 = (_a3 = user == null ? void 0 : user.repeatLog) == null ? void 0 : _a3[`fund__${pillar.id}__${s.id}`]) == null ? void 0 : _b2.length) || 0);
-          }, 0);
+          const totalReps = pillar.subSkills.reduce((sum, s) => sum + (user?.repeatLog?.[`fund__${pillar.id}__${s.id}`]?.length || 0), 0);
           return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
             "div",
             {
@@ -19899,9 +19991,9 @@
       const entries = Object.entries(completedWorkouts).map(([key, val]) => {
         const [progId, phaseId, dayId] = key.split("__");
         const prog = [...ALL_PROGRAMS, SC_PROGRAM_C2, DRIBBLING_PROGRAM_C2, SHOOTING_PROGRAM_C2, RUNNING_PROGRAM, RUNNING_PROGRAM_C2].find((p) => p.id === progId);
-        const phase = prog == null ? void 0 : prog.phases.find((ph) => ph.id === phaseId);
-        const day = (phase == null ? void 0 : phase.days.find((d) => d.id === dayId)) || { name: dayId };
-        return { key, progId, progName: (prog == null ? void 0 : prog.name) || progId, progIcon: prog ? prog.id === "sc" ? "\u{1F4AA}" : prog.id === "dribble" ? "\u{1F3C0}" : "\u{1F3AF}" : "\u{1F4CB}", phaseName: (phase == null ? void 0 : phase.name) || phaseId, phaseColor: (phase == null ? void 0 : phase.color) || COLORS.primary, dayName: day.name, completedAt: val.completedAt };
+        const phase = prog?.phases.find((ph) => ph.id === phaseId);
+        const day = phase?.days.find((d) => d.id === dayId) || { name: dayId };
+        return { key, progId, progName: prog?.name || progId, progIcon: prog ? prog.id === "sc" ? "\u{1F4AA}" : prog.id === "dribble" ? "\u{1F3C0}" : "\u{1F3AF}" : "\u{1F4CB}", phaseName: phase?.name || phaseId, phaseColor: phase?.color || COLORS.primary, dayName: day.name, completedAt: val.completedAt };
       }).sort((a, b) => b.completedAt - a.completedAt);
       return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 994, display: "flex", flexDirection: "column" }, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1A1A1A", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${COLORS.primary}30` }, children: [
@@ -19927,10 +20019,7 @@
     };
     const renderCoachDashboard = () => {
       if (!showCoach) return null;
-      const totalW = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => {
-        var _a2;
-        return s2 + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-      }, 0), 0);
+      const totalW = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => s2 + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
       if (!isCoachAccount) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 993, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { maxWidth: 340, width: "100%", background: "#1E1E1E", borderRadius: 20, padding: "32px 24px", border: `1.5px solid #E05555` }, children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: 40, textAlign: "center", marginBottom: 12 }, children: "\u{1F512}" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: { fontSize: 18, fontWeight: 700, color: "#fff", textAlign: "center", margin: "0 0 6px" }, children: "Coach Access Only" }),
@@ -20040,19 +20129,13 @@
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, overflowY: "auto", padding: 16 }, children: [
           CP === "overview" && (() => {
-            const totalW2 = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => {
-              var _a2;
-              return s2 + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-            }, 0), 0);
+            const totalW2 = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => s2 + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
             const total = coachData.length;
             const active = coachData.filter((u) => Object.keys(u.completedWorkouts || {}).length > 0).length;
             const totalCompleted = coachData.reduce((s, u) => s + Object.keys(u.completedWorkouts || {}).length, 0);
             const avgCompletion = total ? Math.round(totalCompleted / (total * totalW2) * 100) : 0;
             const staffEmails0 = [...allCoachEmails, ...managerEmails];
-            const topAthletes = [...coachData].filter((u) => {
-              var _a2;
-              return !staffEmails0.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "");
-            }).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 3);
+            const topAthletes = [...coachData].filter((u) => !staffEmails0.includes(u.email?.toLowerCase() || "")).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 3);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }, children: [["\u{1F465} Athletes", total], ["\u2705 Active", active], ["\u{1F4AA} Workouts Done", totalCompleted], ["\u{1F4CA} Avg Completion", `${avgCompletion}%`]].map(([label, val]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#1E1E1E", borderRadius: 12, padding: "14px 14px", border: `0.5px solid #3A3A3A` }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: label }),
@@ -20071,29 +20154,22 @@
             ] });
           })(),
           CP === "athletes" && (() => {
-            const mgEmails2 = ((programConfig == null ? void 0 : programConfig.managerEmails) || []).map((e) => e.toLowerCase());
-            const isStaffFn = (u) => {
-              var _a2, _b2;
-              return ((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) === COACH_EMAIL.toLowerCase() || mgEmails2.includes(((_b2 = u.email) == null ? void 0 : _b2.toLowerCase()) || "");
-            };
+            const mgEmails2 = (programConfig?.managerEmails || []).map((e) => e.toLowerCase());
+            const isStaffFn = (u) => u.email?.toLowerCase() === COACH_EMAIL.toLowerCase() || mgEmails2.includes(u.email?.toLowerCase() || "");
             const athletes2 = [...coachData].filter((u) => !isStaffFn(u)).sort((a, b) => (b.xp || 0) - (a.xp || 0));
             const staff2 = [...coachData].filter((u) => isStaffFn(u));
             const allList = [...athletes2, ...staff2];
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
               coachData.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { color: COLORS.textMuted, fontSize: 14 }, children: "No athletes yet." }),
               allList.map((u, idx) => {
-                var _a2, _b2;
-                const isCoachUser = ((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) === COACH_EMAIL.toLowerCase();
-                const isManagerUser = !isCoachUser && mgEmails2.includes(((_b2 = u.email) == null ? void 0 : _b2.toLowerCase()) || "");
+                const isCoachUser = u.email?.toLowerCase() === COACH_EMAIL.toLowerCase();
+                const isManagerUser = !isCoachUser && mgEmails2.includes(u.email?.toLowerCase() || "");
                 const isStaffUser = isCoachUser || isManagerUser;
                 const staffColor = isCoachUser ? COLORS.primary : "#4CAF82";
                 const staffLabel = isCoachUser ? "\u{1F393} Coach" : "\u{1F454} Manager";
                 const showDivider = isStaffUser && idx === athletes2.length && athletes2.length > 0;
                 const cw = u.completedWorkouts || {};
-                const totalW2 = ALL_PROGRAMS.reduce((s2, p) => s2 + p.phases.reduce((s22, ph) => {
-                  var _a3;
-                  return s22 + ph.days.length + (((_a3 = ph.fieldWork) == null ? void 0 : _a3.length) || 0);
-                }, 0), 0);
+                const totalW2 = ALL_PROGRAMS.reduce((s2, p) => s2 + p.phases.reduce((s22, ph) => s22 + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
                 const done = Object.keys(cw).length;
                 const pct = Math.round(done / totalW2 * 100);
                 const s = calcStreak(cw);
@@ -20221,7 +20297,7 @@
             ] }),
             announcements.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 10px", fontSize: 12, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: 0.8 }, children: "Posted Announcements" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: announcements.map((ann) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: "#1E1E1E", borderRadius: 10, padding: "12px 14px", border: `0.5px solid #3A3A3A` }, children: (editingAnn == null ? void 0 : editingAnn.id) === ann.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: announcements.map((ann) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: "#1E1E1E", borderRadius: 10, padding: "12px 14px", border: `0.5px solid #3A3A3A` }, children: editingAnn?.id === ann.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: editingAnn.title, onChange: (e) => setEditingAnn({ ...editingAnn, title: e.target.value }), style: { width: "100%", marginBottom: 8 } }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 3, value: editingAnn.body, onChange: (e) => setEditingAnn({ ...editingAnn, body: e.target.value }), style: { width: "100%", resize: "none", marginBottom: 8 } }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: 8 }, children: [
@@ -20275,14 +20351,10 @@
               return { name: prog.name, icon: prog.icon, done, total, pct: total > 0 ? Math.round(done / total * 100) : 0 };
             });
             const staffEmails1 = [...allCoachEmails, ...managerEmails];
-            const topAthletes2 = [...coachData].filter((u) => {
-              var _a2;
-              return !staffEmails1.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "");
-            }).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 5);
+            const topAthletes2 = [...coachData].filter((u) => !staffEmails1.includes(u.email?.toLowerCase() || "")).sort((a, b) => (b.xp || 0) - (a.xp || 0)).slice(0, 5);
             const staffEmails3 = [...allCoachEmails, ...managerEmails];
             const inactive = coachData.filter((u) => {
-              var _a2;
-              if (staffEmails3.includes(((_a2 = u.email) == null ? void 0 : _a2.toLowerCase()) || "")) return false;
+              if (staffEmails3.includes(u.email?.toLowerCase() || "")) return false;
               const last = Math.max(u.lastLogin || 0, ...Object.values(u.completedWorkouts || {}).map((w) => w.completedAt || 0));
               return now - last >= 7 * 864e5;
             });
@@ -20347,9 +20419,8 @@
                   ] }, u.email);
                 }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
-                  var _a2;
                   const names = inactive.map((u) => `${u.name} (${Math.floor((now - Math.max(u.lastLogin || 0, ...Object.values(u.completedWorkouts || {}).map((w) => w.completedAt || 0))) / 864e5)}d)`).join(", ");
-                  (_a2 = navigator.clipboard) == null ? void 0 : _a2.writeText(`Inactive athletes: ${names}`);
+                  navigator.clipboard?.writeText(`Inactive athletes: ${names}`);
                   alert("Copied to clipboard!");
                 }, style: { marginTop: 10, width: "100%", padding: "9px 0", background: "#2A2A2A", color: COLORS.textMuted, border: "1px solid #3A3A3A", borderRadius: 8, fontSize: 12, cursor: "pointer" }, children: "\u{1F4CB} Copy Inactive List" })
               ] })
@@ -20368,15 +20439,9 @@
             ] });
           })(),
           CP === "programs" && (() => {
-            const totalW2 = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => {
-              var _a2;
-              return s2 + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-            }, 0), 0);
+            const totalW2 = ALL_PROGRAMS.reduce((s, p) => s + p.phases.reduce((s2, ph) => s2 + ph.days.length + (ph.fieldWork?.length || 0), 0), 0);
             const progStats = ALL_PROGRAMS.map((prog) => {
-              const total = prog.phases.reduce((s, ph) => {
-                var _a2;
-                return s + ph.days.length + (((_a2 = ph.fieldWork) == null ? void 0 : _a2.length) || 0);
-              }, 0);
+              const total = prog.phases.reduce((s, ph) => s + ph.days.length + (ph.fieldWork?.length || 0), 0);
               const athleteCompletions = coachData.map((u) => {
                 const done = Object.keys(u.completedWorkouts || {}).filter((k) => k.startsWith(prog.id + "__")).length;
                 return { name: u.name, done, pct: Math.round(done / total * 100) };
@@ -20457,7 +20522,7 @@
                       (group, gi) => group.exercises.map((ex, ei) => {
                         const exKey = `${prog.id}__${phase.id}__${day.id}__${gi}__${ei}`;
                         const override = exerciseOverrides[exKey] || {};
-                        const isEditing = (editingExercise == null ? void 0 : editingExercise.key) === exKey;
+                        const isEditing = editingExercise?.key === exKey;
                         if (isEditing) {
                           return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: "#2A2A2A", borderRadius: 8, padding: "10px", marginBottom: 6 }, children: [
                             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 6px", fontSize: 11, color: COLORS.textMuted }, children: "Exercise name" }),
@@ -20493,10 +20558,7 @@
                         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                           "button",
                           {
-                            onClick: () => {
-                              var _a2, _b2;
-                              return setEditingExercise({ key: exKey, name: override.name || ex.name, sets: ((_a2 = override.sets) == null ? void 0 : _a2.toString()) || ((_b2 = ex.sets) == null ? void 0 : _b2.toString()) || "", reps: override.reps || ex.reps || "" });
-                            },
+                            onClick: () => setEditingExercise({ key: exKey, name: override.name || ex.name, sets: override.sets?.toString() || ex.sets?.toString() || "", reps: override.reps || ex.reps || "" }),
                             style: { width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", background: override.name ? "#1A2A1A" : "#2A2A2A", borderRadius: 8, padding: "8px 10px", marginBottom: 4, border: `1px solid ${override.name ? "#4CAF8230" : "#3A3A3A"}`, cursor: "pointer", textAlign: "left" },
                             children: [
                               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { flex: 1, marginRight: 8 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: override.name ? "#4CAF82" : "#fff" }, children: override.name || ex.name }) }),
@@ -20654,7 +20716,6 @@
             })
           ] }),
           CP === "managers" && (() => {
-            var _a2;
             const cfg = programConfig || {};
             const managers = cfg.managerEmails || [];
             const additionalCoaches = cfg.additionalCoaches || [];
@@ -20670,10 +20731,7 @@
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, background: `${COLORS.primary}10`, borderRadius: 10, padding: "10px 12px", marginBottom: 8, border: `1px solid ${COLORS.primary}20` }, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 32, height: 32, borderRadius: "50%", background: `${COLORS.primary}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }, children: "\u{1F393}" }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: ((_a2 = coachData.find((u) => {
-                      var _a3;
-                      return ((_a3 = u.email) == null ? void 0 : _a3.toLowerCase()) === MAIN_COACH_EMAIL.toLowerCase();
-                    })) == null ? void 0 : _a2.name) || "Main Coach" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: coachData.find((u) => u.email?.toLowerCase() === MAIN_COACH_EMAIL.toLowerCase())?.name || "Main Coach" }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: [
                       MAIN_COACH_EMAIL,
                       " \xB7 Main Coach"
@@ -20682,14 +20740,11 @@
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, color: "#555", fontStyle: "italic" }, children: "Cannot remove" })
                 ] }),
                 additionalCoaches.map((email) => {
-                  const athlete = coachData.find((u) => {
-                    var _a3;
-                    return ((_a3 = u.email) == null ? void 0 : _a3.toLowerCase()) === email.toLowerCase();
-                  });
+                  const athlete = coachData.find((u) => u.email?.toLowerCase() === email.toLowerCase());
                   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, background: "#141414", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }, children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 32, height: 32, borderRadius: "50%", background: `${COLORS.primary}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }, children: "\u{1F393}" }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: (athlete == null ? void 0 : athlete.name) || "Unknown" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: athlete?.name || "Unknown" }),
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: email })
                     ] }),
                     isMainCoach && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
@@ -20700,10 +20755,7 @@
                 }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "8px 0 6px", fontSize: 12, color: COLORS.textMuted }, children: "Add a coach from existing athletes:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 5 }, children: coachData.filter(
-                  (u) => {
-                    var _a3, _b2, _c2;
-                    return ((_a3 = u.email) == null ? void 0 : _a3.toLowerCase()) !== MAIN_COACH_EMAIL.toLowerCase() && !additionalCoaches.map((e) => e.toLowerCase()).includes(((_b2 = u.email) == null ? void 0 : _b2.toLowerCase()) || "") && !managers.includes(((_c2 = u.email) == null ? void 0 : _c2.toLowerCase()) || "");
-                  }
+                  (u) => u.email?.toLowerCase() !== MAIN_COACH_EMAIL.toLowerCase() && !additionalCoaches.map((e) => e.toLowerCase()).includes(u.email?.toLowerCase() || "") && !managers.includes(u.email?.toLowerCase() || "")
                 ).map((u) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: async () => {
                   if (!window.confirm(`Add ${u.name} (${u.email}) as a coach?`)) return;
                   await saveConfig({ additionalCoaches: [...additionalCoaches, u.email.toLowerCase()] });
@@ -20720,14 +20772,11 @@
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 4px", fontSize: 12, fontWeight: 700, color: "#4CAF82", textTransform: "uppercase", letterSpacing: 0.8 }, children: "\u{1F454} Managers" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 12px", fontSize: 12, color: COLORS.textMuted }, children: "Managers can view progress, analytics, run photos, weight logs, and post announcements. They cannot edit program content or reset data." }),
                 managers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { marginBottom: 10, display: "flex", flexDirection: "column", gap: 6 }, children: managers.map((email) => {
-                  const athlete = coachData.find((u) => {
-                    var _a3;
-                    return ((_a3 = u.email) == null ? void 0 : _a3.toLowerCase()) === email.toLowerCase();
-                  });
+                  const athlete = coachData.find((u) => u.email?.toLowerCase() === email.toLowerCase());
                   return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, background: "#141414", borderRadius: 10, padding: "10px 12px" }, children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 32, height: 32, borderRadius: "50%", background: "#4CAF8215", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }, children: "\u{1F454}" }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: (athlete == null ? void 0 : athlete.name) || "Unknown" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 13, color: "#fff", fontWeight: 600 }, children: athlete?.name || "Unknown" }),
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 11, color: COLORS.textMuted }, children: email })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
@@ -20738,10 +20787,7 @@
                 }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 6px", fontSize: 12, color: COLORS.textMuted }, children: "Add from existing athletes:" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: 5 }, children: coachData.filter(
-                  (u) => {
-                    var _a3, _b2;
-                    return !managers.includes(((_a3 = u.email) == null ? void 0 : _a3.toLowerCase()) || "") && !allCoachEmails.includes(((_b2 = u.email) == null ? void 0 : _b2.toLowerCase()) || "");
-                  }
+                  (u) => !managers.includes(u.email?.toLowerCase() || "") && !allCoachEmails.includes(u.email?.toLowerCase() || "")
                 ).map((u) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: async () => {
                   if (!window.confirm(`Add ${u.name} (${u.email}) as a manager?`)) return;
                   await saveConfig({ managerEmails: [...managers, u.email.toLowerCase()] });
@@ -20890,9 +20936,8 @@
     };
     const PULL_THRESHOLD = 70;
     const handleTouchStart = (e) => {
-      var _a2;
       pullStartY.current = e.touches[0].clientY;
-      pullScrollTop.current = ((_a2 = contentRef.current) == null ? void 0 : _a2.scrollTop) || 0;
+      pullScrollTop.current = contentRef.current?.scrollTop || 0;
     };
     const handleTouchMove = (e) => {
       if (pullRefreshing) return;
