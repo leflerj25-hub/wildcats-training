@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260505-235315 -->
+  <!-- Wildcats Training v20260506-234608 -->
 </head>
 <body>
   <div id="root"></div>
@@ -17138,14 +17138,20 @@
       setRestTimer(null);
     };
     async function openAthleteProfile(u) {
-      openAthleteProfile(u);
+      setShowCoach(false);
+      setShowManager(false);
+      setViewingAthlete(u);
       setProfileTab("overview");
       setAthleteExtraData({});
-      const [weights, homecourt] = await Promise.all([
-        loadData(`wildcats:weights:${u.email}`) || {},
-        loadData(`wildcats:homecourt:${u.email}`) || []
-      ]);
-      setAthleteExtraData({ weights: weights || {}, homecourt: homecourt || [] });
+      try {
+        const [weightsRaw, homecourtRaw] = await Promise.all([
+          loadData(`wildcats:weights:${u.email}`),
+          loadData(`wildcats:homecourt:${u.email}`)
+        ]);
+        setAthleteExtraData({ weights: weightsRaw || {}, homecourt: homecourtRaw || [] });
+      } catch (e) {
+        setAthleteExtraData({ weights: {}, homecourt: [] });
+      }
     }
     async function loadCoachData() {
       const users = await loadData("wildcats:users", true) || {};
@@ -20432,7 +20438,10 @@
                   ] }),
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: isStaffUser ? "#161A16" : "#1E1E1E", borderRadius: 12, padding: "14px 14px", border: isStaffUser ? `1px solid ${staffColor}30` : `0.5px solid #3A3A3A`, opacity: isStaffUser ? 0.85 : 1 }, children: [
                     isStaffUser && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 8px", fontSize: 11, color: staffColor, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }, children: staffLabel }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { onClick: () => openAthleteProfile(u), style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10, cursor: "pointer" }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { onClick: (e) => {
+                      e.stopPropagation();
+                      openAthleteProfile(u);
+                    }, style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 10, cursor: "pointer" }, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { name: u.name, size: 40, bg: isStaffUser ? staffColor : COLORS.primary }),
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontWeight: 700, fontSize: 15, color: "#fff" }, children: u.name }),
