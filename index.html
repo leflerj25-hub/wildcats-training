@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260506-234608 -->
+  <!-- Wildcats Training v20260507-235959 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16638,16 +16638,16 @@
             const sched = await loadData(`wildcats:schedule:${cached.email.toLowerCase()}`);
             if (sched) setSchedule(sched);
           }
-          const savedWeights = await loadData(`wildcats:weights:${cached.email.toLowerCase()}`);
+          const savedWeights = await loadData(`wildcats:weights:${cached.email.toLowerCase()}`, true);
           if (savedWeights) setSetWeights(savedWeights);
-          const savedRuns = await loadData(`wildcats:runs:${cached.email.toLowerCase()}`);
+          const savedRuns = await loadData(`wildcats:runs:${cached.email.toLowerCase()}`, true);
           if (savedRuns) setRunLogs(savedRuns);
           const anns = await loadData("wildcats:announcements", true);
           if (anns) {
             setAnnouncements(anns);
             window.__wildcatsAnnouncements = anns;
           }
-          const checks = await loadData(`wildcats:exchecks:${cached.email.toLowerCase()}`);
+          const checks = await loadData(`wildcats:exchecks:${cached.email.toLowerCase()}`, true);
           if (checks) setExChecks(checks);
         }
         setLoading(false);
@@ -16698,8 +16698,8 @@
           if (!users) return;
           Promise.all(Object.values(users).map(async (u) => ({
             ...u,
-            setWeights: await loadData(`wildcats:weights:${u.email}`) || {},
-            runLogs: await loadData(`wildcats:runs:${u.email}`) || {}
+            setWeights: await loadData(`wildcats:weights:${u.email}`, true) || {},
+            runLogs: await loadData(`wildcats:runs:${u.email}`, true) || {}
           }))).then((data) => {
             setManagerData(data);
             setShowManager(true);
@@ -16923,9 +16923,9 @@
         users[u.email].lastLogin = Date.now();
         await saveData("wildcats:users", users, true);
       }
-      const savedWeights = await loadData(`wildcats:weights:${u.email}`);
+      const savedWeights = await loadData(`wildcats:weights:${u.email}`, true);
       if (savedWeights) setSetWeights(savedWeights);
-      const savedRuns = await loadData(`wildcats:runs:${u.email}`);
+      const savedRuns = await loadData(`wildcats:runs:${u.email}`, true);
       if (savedRuns) setRunLogs(savedRuns);
       const anns = await loadData("wildcats:announcements", true);
       if (anns) {
@@ -16934,7 +16934,7 @@
       }
       const rxns = await loadData("wildcats:reactions", true) || {};
       setReactions(rxns);
-      const checks = await loadData(`wildcats:exchecks:${u.email}`);
+      const checks = await loadData(`wildcats:exchecks:${u.email}`, true);
       if (checks) setExChecks(checks);
       const ob = await loadData(`wildcats:onboarded:${u.email}`);
       if (!ob) {
@@ -17009,9 +17009,9 @@
       const countToday = countXPTodayForPrefix(prefix);
       if (countToday >= 5) return 0;
       await awardRepeatXP(prefix, 10);
-      const existing = await loadData(`wildcats:homecourt:${user.email}`) || [];
+      const existing = await loadData(`wildcats:homecourt:${user.email}`, true) || [];
       const entry = { date: Date.now(), type: sessionType, screenshot, screenshotName };
-      await saveData(`wildcats:homecourt:${user.email}`, [...existing, entry]);
+      await saveData(`wildcats:homecourt:${user.email}`, [...existing, entry], true);
       return countToday + 1;
     }
     const completeWorkout = async (progId, phaseId, dayId) => {
@@ -17095,7 +17095,7 @@
       const prev = setWeights[key] || "";
       const updated = { ...setWeights, [key]: val };
       setSetWeights(updated);
-      await saveData(`wildcats:weights:${user.email}`, updated);
+      await saveData(`wildcats:weights:${user.email}`, updated, true);
       const isBWKey = key.includes("__bw");
       if (!isBWKey && val && (!prev || parseFloat(val) > parseFloat(prev))) {
         const parts = key.split("__");
@@ -17145,8 +17145,8 @@
       setAthleteExtraData({});
       try {
         const [weightsRaw, homecourtRaw] = await Promise.all([
-          loadData(`wildcats:weights:${u.email}`),
-          loadData(`wildcats:homecourt:${u.email}`)
+          loadData(`wildcats:weights:${u.email}`, true),
+          loadData(`wildcats:homecourt:${u.email}`, true)
         ]);
         setAthleteExtraData({ weights: weightsRaw || {}, homecourt: homecourtRaw || [] });
       } catch (e) {
@@ -17157,8 +17157,8 @@
       const users = await loadData("wildcats:users", true) || {};
       const athleteList = Object.values(users);
       const withData = await Promise.all(athleteList.map(async (u) => {
-        const weights = await loadData(`wildcats:weights:${u.email}`) || {};
-        const runs = await loadData(`wildcats:runs:${u.email}`) || {};
+        const weights = await loadData(`wildcats:weights:${u.email}`, true) || {};
+        const runs = await loadData(`wildcats:runs:${u.email}`, true) || {};
         return { ...u, setWeights: weights, runLogs: runs };
       }));
       setCoachData(withData);
@@ -17178,7 +17178,7 @@
     const saveRunLog = async (wKey, entry) => {
       const updated = { ...runLogs, [wKey]: entry };
       setRunLogs(updated);
-      await saveData(`wildcats:runs:${user.email}`, updated);
+      await saveData(`wildcats:runs:${user.email}`, updated, true);
       if (entry.isTrial && entry.totalSecs) {
         const sharedRuns = await loadData("wildcats:runlb", true) || {};
         const existing = sharedRuns[user.email];
@@ -17191,7 +17191,7 @@
     const toggleExCheck = async (key) => {
       const updated = { ...exChecks, [key]: !exChecks[key] };
       setExChecks(updated);
-      await saveData(`wildcats:exchecks:${user.email}`, updated);
+      await saveData(`wildcats:exchecks:${user.email}`, updated, true);
     };
     const saveAnnouncement = async (title, body) => {
       if (!title.trim() || !body.trim()) return;
@@ -17691,7 +17691,7 @@
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
                             const updated = { ...setWeights, [bwKey]: checked ? "" : "done" };
                             setSetWeights(updated);
-                            saveData(`wildcats:weights:${user.email}`, updated);
+                            saveData(`wildcats:weights:${user.email}`, updated, true);
                           }, style: { width: 36, height: 36, borderRadius: 8, border: `2px solid ${checked ? activePhase.color : COLORS.border}`, background: checked ? activePhase.color : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }, children: checked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { color: "#fff", fontSize: 16, fontWeight: 700 }, children: "\u2713" }) })
                         ] }, si);
                       }) })
@@ -18825,8 +18825,8 @@
         isManagerAccount && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: async () => {
           const users = await loadData("wildcats:users", true) || {};
           const withData = await Promise.all(Object.values(users).map(async (u) => {
-            const weights = await loadData(`wildcats:weights:${u.email}`) || {};
-            const runs = await loadData(`wildcats:runs:${u.email}`) || {};
+            const weights = await loadData(`wildcats:weights:${u.email}`, true) || {};
+            const runs = await loadData(`wildcats:runs:${u.email}`, true) || {};
             return { ...u, setWeights: weights, runLogs: runs };
           }));
           setManagerData(withData);
@@ -21112,7 +21112,7 @@
                 setStreak(0);
                 setUser((prev) => ({ ...prev, completedWorkouts: {}, xp: 0 }));
                 setEarnedAchievements([]);
-                await saveData(`wildcats:weights:${user.email}`, {});
+                await saveData(`wildcats:weights:${user.email}`, {}, true);
                 setSetWeights({});
               }
             };
