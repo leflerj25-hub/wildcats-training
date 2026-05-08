@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260508-190758 -->
+  <!-- Wildcats Training v20260508-191601 -->
 </head>
 <body>
   <div id="root"></div>
@@ -15905,13 +15905,18 @@
     if (!gymDone) return false;
     if (prevPhase.fieldWork && prevPhase.fieldWork.length > 0) {
       const phaseKey = `${prog.id}__${prevPhase.id}`;
-      const coachUnlockedAll = prevPhase.fieldWork.every((_, fi) => !!completedWorkouts[`${phaseKey}__field_${fi}`]);
+      const trackedFW = prevPhase.fieldWork.filter(
+        (fw) => fw.type !== "none" && !(fw.type === "linear" && prevPhase.id === "may")
+      );
+      if (trackedFW.length === 0) return true;
+      const coachUnlockedAll = trackedFW.every((fw, fi) => {
+        const actualFi = prevPhase.fieldWork.indexOf(fw);
+        return !!completedWorkouts[`${phaseKey}__field_${actualFi}`];
+      });
       if (coachUnlockedAll) return true;
       const numWeeks = 4;
       for (let w = 1; w <= numWeeks; w++) {
-        for (let fi = 0; fi < prevPhase.fieldWork.length; fi++) {
-          const fw = prevPhase.fieldWork[fi];
-          if (fw.type === "none") continue;
+        for (const fw of trackedFW) {
           const fwKey = `${phaseKey}__field_${fw.type}_w${w}`;
           if (!completedWorkouts[fwKey]) return false;
         }
