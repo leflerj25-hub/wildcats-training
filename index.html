@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260507-235959 -->
+  <!-- Wildcats Training v20260508-190758 -->
 </head>
 <body>
   <div id="root"></div>
@@ -15904,12 +15904,15 @@
     const gymDone = prevPhase.days.every((d) => !!completedWorkouts[`${prog.id}__${prevPhase.id}__${d.id}`]);
     if (!gymDone) return false;
     if (prevPhase.fieldWork && prevPhase.fieldWork.length > 0) {
+      const phaseKey = `${prog.id}__${prevPhase.id}`;
+      const coachUnlockedAll = prevPhase.fieldWork.every((_, fi) => !!completedWorkouts[`${phaseKey}__field_${fi}`]);
+      if (coachUnlockedAll) return true;
       const numWeeks = 4;
       for (let w = 1; w <= numWeeks; w++) {
         for (let fi = 0; fi < prevPhase.fieldWork.length; fi++) {
           const fw = prevPhase.fieldWork[fi];
           if (fw.type === "none") continue;
-          const fwKey = `${prog.id}__${prevPhase.id}__field_${fw.type}_w${w}`;
+          const fwKey = `${phaseKey}__field_${fw.type}_w${w}`;
           if (!completedWorkouts[fwKey]) return false;
         }
       }
@@ -16394,8 +16397,14 @@
                   if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
                 });
                 (phase.fieldWork || []).forEach((fw, fi) => {
-                  const k = `${phaseKey}__field_${fi}`;
-                  if (!newCW[k]) newCW[k] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
+                  const kIdx = `${phaseKey}__field_${fi}`;
+                  if (!newCW[kIdx]) newCW[kIdx] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
+                  if (fw.type && fw.type !== "none") {
+                    for (let w = 1; w <= 4; w++) {
+                      const kWeek = `${phaseKey}__field_${fw.type}_w${w}`;
+                      if (!newCW[kWeek]) newCW[kWeek] = { completedAt: Date.now(), xp: 0, coachUnlocked: true, noXP: true };
+                    }
+                  }
                 });
                 const users = await loadData2("wildcats:users", true) || {};
                 if (users[u.email]) {
