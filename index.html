@@ -17,7 +17,7 @@
     input:focus, textarea:focus { border-color: #B8962E; }
     * { -webkit-tap-highlight-color: transparent; }
   </style>
-  <!-- Wildcats Training v20260508-191601 -->
+  <!-- Wildcats Training v20260601-180640 -->
 </head>
 <body>
   <div id="root"></div>
@@ -15932,13 +15932,8 @@
     return !!completedWorkouts[`${prog.id}__${phase.id}__${prevDay.id}`];
   }
   function isRunningUnlocked(completedWorkouts) {
-    const scMay = SC_PROGRAM.phases.find((p) => p.id === "may");
-    if (!scMay) return false;
-    if (!scMay.days.every((d) => !!completedWorkouts[`sc__may__${d.id}`])) return false;
-    for (let w = 1; w <= 4; w++) {
-      if (!completedWorkouts[`sc__may__field_lateral_w${w}`]) return false;
-    }
-    return true;
+    const unlockDate = /* @__PURE__ */ new Date("2026-06-01T00:00:00");
+    return /* @__PURE__ */ new Date() >= unlockDate;
   }
   var SUPABASE_URL = "https://ipvhrljdedyuwgdmohbq.supabase.co";
   var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwdmhybGpkZWR5dXdnZG1vaGJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0ODAxNDMsImV4cCI6MjA4OTA1NjE0M30.8m2K0hmIjtS2tdFp7oPOHU7-KYNwnO3mAg-sLVPPYOo";
@@ -16825,15 +16820,28 @@
         const myRank = weeklyXPs.findIndex((w) => w.email === user.email) + 1;
         const myWeekXP = weeklyXPs.find((w) => w.email === user.email)?.weekXP || 0;
         setWeeklyLeader({ top3, myRank, myWeekXP, total: weeklyXPs.length });
+        const wins = await loadData("wildcats:weeklywins", true) || {};
         const currentWeekKey3 = mondayStart.toISOString().split("T")[0];
-        if (top3.length > 0 && top3[0].weekXP > 0) {
-          const wins = await loadData("wildcats:weeklywins", true) || {};
-          if (!wins[currentWeekKey3] || wins[currentWeekKey3].email !== top3[0].email) {
-            wins[currentWeekKey3] = { email: top3[0].email, name: top3[0].name, xp: top3[0].weekXP, week: currentWeekKey3 };
+        const prevMondayMs = mondayStart.getTime() - 7 * 24 * 60 * 60 * 1e3;
+        const prevWeekKey3 = new Date(prevMondayMs).toISOString().split("T")[0];
+        if (!wins[prevWeekKey3]) {
+          const prevWeekXPs = Object.values(users).map((u) => {
+            const workoutXP = Object.values(u.completedWorkouts || {}).filter((w) => w.completedAt && w.completedAt >= prevMondayMs && w.completedAt < mondayStart.getTime()).reduce((s, w) => s + (w.xp || 0), 0);
+            const repeatXP = Object.values(u.repeatLog || {}).flatMap((arr) => Array.isArray(arr) ? arr : []).filter((ts) => ts >= prevMondayMs && ts < mondayStart.getTime()).length * 25;
+            return { email: u.email, name: u.name, weekXP: workoutXP + repeatXP };
+          }).sort((a, b) => b.weekXP - a.weekXP);
+          const prevWinner = prevWeekXPs[0];
+          if (prevWinner && prevWinner.weekXP > 0) {
+            wins[prevWeekKey3] = {
+              email: prevWinner.email,
+              name: prevWinner.name,
+              xp: prevWinner.weekXP,
+              week: prevWeekKey3
+            };
             await saveData("wildcats:weeklywins", wins, true);
           }
-          setWeeklyWins(wins);
         }
+        setWeeklyWins(wins);
       };
       loadSocialData();
     }, [user, completedWorkouts]);
@@ -18303,10 +18311,10 @@
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 11, fontWeight: 700, color: "#000", opacity: 0.75 }, children: "Resets Monday" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { padding: "12px 16px" }, children: [
-            weeklyLeader.top3.map((athlete, i) => {
+            weeklyLeader.top3.every((a) => a.weekXP === 0) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "4px 0 8px", fontSize: 13, color: COLORS.textMuted, fontStyle: "italic" }, children: "\u{1F305} Fresh week \u2014 be the first to log a workout!" }) : weeklyLeader.top3.filter((a) => a.weekXP > 0).map((athlete, i) => {
               const medals = ["\u{1F947}", "\u{1F948}", "\u{1F949}"];
               const isMe = athlete.email === user.email;
-              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < weeklyLeader.top3.length - 1 ? `0.5px solid ${COLORS.border}` : "none" }, children: [
+              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: i < weeklyLeader.top3.filter((a) => a.weekXP > 0).length - 1 ? `0.5px solid ${COLORS.border}` : "none" }, children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 20, flexShrink: 0 }, children: medals[i] }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { flex: 1, fontSize: 14, fontWeight: isMe ? 700 : 500, color: isMe ? COLORS.primary : "#fff" }, children: [
                   athlete.name,
@@ -18318,7 +18326,7 @@
                 ] })
               ] }, athlete.email);
             }),
-            weeklyLeader.myRank > 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", marginTop: 4, borderTop: `0.5px solid ${COLORS.border}` }, children: [
+            weeklyLeader.myRank > 3 && weeklyLeader.myWeekXP > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", marginTop: 4, borderTop: `0.5px solid ${COLORS.border}` }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { fontSize: 14, color: COLORS.textMuted, flexShrink: 0, width: 28, textAlign: "center" }, children: [
                 "#",
                 weeklyLeader.myRank
@@ -18329,7 +18337,7 @@
                 " XP"
               ] })
             ] }),
-            weeklyLeader.myRank === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "8px 0 0", fontSize: 11, color: COLORS.textMuted }, children: "Complete a workout to get on the board this week!" })
+            weeklyLeader.myWeekXP === 0 && !weeklyLeader.top3.every((a) => a.weekXP === 0) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "6px 0 0", fontSize: 11, color: COLORS.textMuted }, children: "Complete a workout to get on the board!" })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: streak > 0 ? "1fr 1fr" : "1fr", gap: 10, marginBottom: 14 }, children: [
@@ -18430,7 +18438,7 @@
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: 32, flexShrink: 0 }, children: "\u{1F3C3}" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: "0 0 3px", fontWeight: 600, fontSize: 14, color: COLORS.textMuted }, children: "\u{1F512} Running Program" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: "Complete S&C Phase 1 (April) to unlock" })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { margin: 0, fontSize: 12, color: COLORS.textMuted }, children: "Unlocks June 1" })
             ] })
           ] })
         ] }),
