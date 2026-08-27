@@ -17,7 +17,7 @@
     input:focus,textarea:focus{border-color:#B8962E}
     *{-webkit-tap-highlight-color:transparent}
   </style>
-  <!-- Wildcats Training v20260822-153345 -->
+  <!-- Wildcats Training v20260826-220506 -->
 </head>
 <body>
   <div id="root"></div>
@@ -16810,33 +16810,40 @@
         mondayStart.setHours(0, 0, 0, 0);
         mondayStart.setDate(now2.getDate() - (dow2 === 0 ? 6 : dow2 - 1));
         const mondayMs = mondayStart.getTime();
-        const weeklyXPs = Object.values(users).map((u) => {
-          const workoutXP = Object.values(u.completedWorkouts || {}).filter((w) => w.completedAt && w.completedAt >= mondayMs).reduce((s, w) => s + (w.xp || 0), 0);
-          const repeatXP = Object.values(u.repeatLog || {}).flatMap((arr) => arr).filter((ts) => ts >= mondayMs).reduce((s, _) => s + 25, 0);
-          return { email: u.email, name: u.name, weekXP: workoutXP + repeatXP };
-        }).sort((a, b) => b.weekXP - a.weekXP);
+        const prevMondayMs = mondayMs - 7 * 24 * 60 * 60 * 1e3;
+        const athleteList2 = Object.values(users);
+        const gpLogs = {};
+        await Promise.all(athleteList2.map(async (u) => {
+          const log = await loadData(`wildcats:gameplay:${u.email}`, true);
+          gpLogs[u.email] = log || [];
+        }));
+        const calcWeekXP = (u, fromMs, toMs = null) => {
+          const workoutXP = Object.values(u.completedWorkouts || {}).filter((w) => w.completedAt && w.completedAt >= fromMs && (toMs === null || w.completedAt < toMs)).reduce((s, w) => s + (w.xp || 0), 0);
+          const repeatXP = Object.values(u.repeatLog || {}).flatMap((arr) => Array.isArray(arr) ? arr : []).filter((ts) => ts >= fromMs && (toMs === null || ts < toMs)).length * 25;
+          const gpXP = (gpLogs[u.email] || []).filter((s) => s.date >= fromMs && (toMs === null || s.date < toMs)).reduce((s, e) => s + (e.xp || 0), 0);
+          return workoutXP + repeatXP + gpXP;
+        };
+        const weeklyXPs = athleteList2.map((u) => ({
+          email: u.email,
+          name: u.name,
+          weekXP: calcWeekXP(u, mondayMs)
+        })).sort((a, b) => b.weekXP - a.weekXP);
         const top3 = weeklyXPs.slice(0, 3);
         const myRank = weeklyXPs.findIndex((w) => w.email === user.email) + 1;
         const myWeekXP = weeklyXPs.find((w) => w.email === user.email)?.weekXP || 0;
         setWeeklyLeader({ top3, myRank, myWeekXP, total: weeklyXPs.length });
         const wins = await loadData("wildcats:weeklywins", true) || {};
         const currentWeekKey3 = mondayStart.toISOString().split("T")[0];
-        const prevMondayMs = mondayStart.getTime() - 7 * 24 * 60 * 60 * 1e3;
         const prevWeekKey3 = new Date(prevMondayMs).toISOString().split("T")[0];
         if (!wins[prevWeekKey3]) {
-          const prevWeekXPs = Object.values(users).map((u) => {
-            const workoutXP = Object.values(u.completedWorkouts || {}).filter((w) => w.completedAt && w.completedAt >= prevMondayMs && w.completedAt < mondayStart.getTime()).reduce((s, w) => s + (w.xp || 0), 0);
-            const repeatXP = Object.values(u.repeatLog || {}).flatMap((arr) => Array.isArray(arr) ? arr : []).filter((ts) => ts >= prevMondayMs && ts < mondayStart.getTime()).length * 25;
-            return { email: u.email, name: u.name, weekXP: workoutXP + repeatXP };
-          }).sort((a, b) => b.weekXP - a.weekXP);
+          const prevWeekXPs = athleteList2.map((u) => ({
+            email: u.email,
+            name: u.name,
+            weekXP: calcWeekXP(u, prevMondayMs, mondayMs)
+          })).sort((a, b) => b.weekXP - a.weekXP);
           const prevWinner = prevWeekXPs[0];
           if (prevWinner && prevWinner.weekXP > 0) {
-            wins[prevWeekKey3] = {
-              email: prevWinner.email,
-              name: prevWinner.name,
-              xp: prevWinner.weekXP,
-              week: prevWeekKey3
-            };
+            wins[prevWeekKey3] = { email: prevWinner.email, name: prevWinner.name, xp: prevWinner.weekXP, week: prevWeekKey3 };
             await saveData("wildcats:weeklywins", wins, true);
           }
         }
